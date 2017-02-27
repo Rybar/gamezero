@@ -4,4 +4,4 @@ uses playground.js for input and state management
 
 DB32 palette
 
-(gamezero)[http://rybar.github.io/gamezero/wwwroot/]
+[gamezero](http://rybar.github.io/gamezero/wwwroot/)
