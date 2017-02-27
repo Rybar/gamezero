@@ -41,6 +41,14 @@ ENGINE.Music = {
 
     },
 
+    keydown: function(data) {
+        if (data.key == 's') {
+            console.log('s pressed');
+            this.app.setState(ENGINE.Game);
+
+        }
+    },
+
     render: function() {
 
         /* put your render calls there */
