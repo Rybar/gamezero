@@ -8,14 +8,14 @@ ENGINE.Game = {
 
         E.dots = [];
         window.dots = E.dots;
-        var i = 60;
+        var i = 300;
 
         while(--i){
             E.dots.push({
                 x: (Math.random()*255)|0,
                 y: (Math.random()*255)|0,
                 //z: (Math.random()*255)|0,
-                z: (Math.random()*128)|0,
+                z: (Math.random()*255)|0,
                 color: (Math.random()*31)|0
             });
         }
@@ -28,7 +28,11 @@ ENGINE.Game = {
 
     step: function(dt) {
 
-        this.rotate(E.dots, 0.02, 0.01, 0.01);
+        this.rotate(E.dots, 0.0095, 0.000, 0.009);
+        for(var i = 0; i < E.dots.length; i++){
+            E.dots[i].y += (Math.random()*2) - 1;
+        }
+        E.dots.sort(function(a,b){return a.z - b.z});
 
         // if(E.y2 < 0) E.y2 = 255;
 
@@ -44,7 +48,7 @@ ENGINE.Game = {
     keydown: function(data) {
         if (data.key == 's') {
             console.log('s pressed');
-            this.app.setState(ENGINE.Music);
+            this.app.setState(ENGINE.Lines);
         }
         if (data.key == 'x') {
             E.screenCapture();
@@ -53,34 +57,39 @@ ENGINE.Game = {
 
     render: function() {
 
-        /* put your render calls there */
-        E.screen.fill(1, 0, E.screen.length);
-        E.gfx.line(0,128, 255,128,7);
-        E.gfx.line(128,0, 128,255,7);
-        //E.gfx.line(E.x1, E.y1, E.x2, E.y2, 6);
+        E.screen.fill(0, 0, E.screen.length);
+
 
         E.gfx.line(E.cursor.x-4, E.cursor.y, E.cursor.x+4, E.cursor.y, 11);
         E.gfx.line(E.cursor.x, E.cursor.y-4, E.cursor.x, E.cursor.y+4, 31);
 
 
-        var x1, x2, y1, y2
+        for(var i = 0; i < E.dots.length; i++){
+            var nodeA = E.dots[i]
 
-        i = E.dots.length;
-        while(i--) {
-            E.gfx.fillCircle(
-                E.dots[i].x,
-                E.dots[i].y,
-                ((E.dots[i].z/255)*16)|0,
-                E.dots[i].color
-            )
+
+            for(var i = 0; i < E.dots.length; i++){
+                var bIndex = (E.dots[i].z.map(0, 350, 0, 31))|0;
+                E.gfx.fillCircle( E.dots[i].x,  E.dots[i].y,  ((E.dots[i].z/255)*6)|0, E.brightness[bIndex]);
+                var nodeA = E.dots[i]
+                for(var j = i+1; j < E.dots.length; j++){
+
+                    var nodeB = E.dots[j];
+                    var dx = nodeB.x - nodeA.x,
+                        dy = nodeB.y - nodeA.y,
+                        dist = Math.sqrt(dx * dx + dy * dy);
+                    if(dist < 32){
+                        E.gfx.line(E.dots[i].x, E.dots[i].y, E.dots[j].x, E.dots[j].y, E.brightness[32-(dist|0)]);
+                    }
+                }
+            }
+
         }
 
-        var i;
-        for(i = 0;i<32; i++) {
-            E.gfx.fillRect(i*8, 0, (i*8)+8, 8, i);
-        }
+//color bars
+        this.makeColorBar();
 
-        E.dots.sort(function(a,b){return b.z - a.z});
+        this.noise();
         E.render();
 
     },
@@ -116,7 +125,19 @@ ENGINE.Game = {
         points[i].y = (Ayx*px + Ayy*py + Ayz*pz)+128;
         points[i].z = (Azx*px + Azy*py + Azz*pz)+128;
     }
+    },
+
+    noise: function(){
+        for(var i = 0; i < 0x10000; i++){
+            if(Math.random() < .10 && E.screen[i] != 0) E.screen[i] -= 1;
+            //if(E.screen[i] < 0)E.screen[i] = 31;
+        }
+    },
+
+    makeColorBar: function(){
+        for(var i = 0; i<32; i++) {
+            E.gfx.fillRect(i*8, 0, (i*8)+8, 8, i);
+        }
+    }
+
 }
-
-
-};
