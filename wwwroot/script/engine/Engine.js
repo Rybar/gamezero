@@ -1,4 +1,5 @@
 ENGINE = {
+    E: this,
 
     /*
      screen memory
@@ -9,35 +10,45 @@ ENGINE = {
      */
 
     //DB32 Palette
-    colors: [0xff000000, 0xff342022, 0xff3c2845, 0xff313966, 0xff3b568f, 0xff2671df, 0xff66a0d9, 0xff9ac3ee, 0xff36f2fb, 0xff50e599, 0xff30be6a, 0xff6e9437, 0xff2f694b, 0xff244b52, 0xff393c32, 0xff743f3f, 0xff826030, 0xffe16e5b, 0xffff9b63, 0xffe4cd5f, 0xfffcdbcb, 0xffffffff, 0xffb7ad9b, 0xff877e84, 0xff6a6a69, 0xff525659, 0xff8a4276, 0xff3232ac, 0xff6357d9, 0xffba7bd7, 0xff4a978f, 0xff306f8a],
+    colors: [0xff000000, 0xff342022, 0xff3c2845, 0xff313966, 0xff3b568f, 0xff2671df, 0xff66a0d9, 0xff9ac3ee, 0xff36f2fb,
+        0xff50e599, 0xff30be6a, 0xff6e9437, 0xff2f694b, 0xff244b52, 0xff393c32, 0xff743f3f, 0xff826030, 0xffe16e5b,
+        0xffff9b63, 0xffe4cd5f, 0xfffcdbcb, 0xffffffff, 0xffb7ad9b, 0xff877e84, 0xff6a6a69, 0xff525659, 0xff8a4276,
+        0xff3232ac, 0xff6357d9, 0xffba7bd7, 0xff4a978f, 0xff306f8a],
 
-    init: function () {
-
-        E.num = 256;
-        E.tick = 0;
-        E.counter = false;
-        stats = new Stats();
-        stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-        document.body.appendChild(stats.dom);
-
-        E.dots = [];
-
-        for (i = 0; i < E.num; i++) {
-            E.dots.push({
-                x: Math.floor(Math.random() * E.canvasWidth),
-                y: Math.floor(Math.random() * E.canvasHeight),
-                z: Math.floor(Math.random() * E.canvasHeight)
-            })
-        }
-
-    },
-
-    draw: function () {
-        //draw stuff here, or replace this function from outside
-    },
-
-    update: function () {
-        //update logic here, or replace this function from outside
+    //col enum
+    col: {
+        Black: 0,
+        Valhalla: 1,
+        LouLou: 2,
+        OiledCedar: 3,
+        Rope: 4,
+        TahitiGold: 5,
+        Twine: 6,
+        Pancho: 7,
+        GoldenFizz: 8,
+        Atlantis: 9,
+        Christi: 10,
+        ElfGreen: 11,
+        Dell: 12,
+        Verdigris: 13,
+        Opal: 14,
+        DeepKoamaru: 15,
+        VeniceBlue: 16,
+        RoyalBlue: 17,
+        Cornflower: 18,
+        Viking: 19,
+        LightSteelBlue: 20,
+        White: 21,
+        Heather: 22,
+        Topaz: 23,
+        DimGray: 24,
+        SmokeyAsh: 25,
+        Clairvoyant: 26,
+        Red: 27,
+        Mandy: 28,
+        PinkPlum: 29,
+        RainForest: 30,
+        Stinger: 31
     },
 
     gfx: {
@@ -47,6 +58,7 @@ ENGINE = {
         },
 
         pset: function (x, y, color) { //from colors array, 0-31
+            x = x|0; y = y|0;
 
             if (x > -1 && x < 256 && y > -1 && y < 256) {
                 ENGINE.screen[y * ENGINE.canvasWidth + x] = color;
@@ -54,6 +66,11 @@ ENGINE = {
         },
 
         line: function (x1, y1, x2, y2, color) {
+
+            x1 = x1|0;
+            x2 = x2|0;
+            y1 = y1|0;
+            y2 = y2|0;
 
             var dy = (y2 - y1);
             var dx = (x2 - x1);
@@ -125,6 +142,7 @@ ENGINE = {
         },
 
         fillCircle: function (xm, ym, r, color) {
+            xm = xm|0; ym = ym|0, r = r|0; color = color|0;
             var x = -r, y = 0, err = 2 - 2 * r;
             /* II. Quadrant */
             do {
@@ -145,27 +163,73 @@ ENGINE = {
         },
 
         rect: function (x1, y1, x2, y2, color) {
+            x1 = x1|0;
+            x2 = x2|0;
+            y1 = y1|0;
+            y2 = y2|0;
 
+            if(x1 > x2){ //we can't have this, it'll bork the fast .fill() stuff below.
+                x1 = x1 ^ x2;
+                x2 = x1 ^ x2;
+                x1 = x1 ^ x2;  //XOR swap algorithm. https://en.wikipedia.org/wiki/XOR_swap_algorithm
+            }
+
+            //if(y1 > y2){
+            //    y1 = y1 ^ y2;
+            //    y2 = y1 ^ y2;
+            //    y1 = y1 ^ y2;
+            //}
 
             ENGINE.screen.fill(color, y1 * E.canvasWidth + x1, y1 * E.canvasWidth + x2);
             this.line(x2, y1, x2, y2, color);
-            this.line(x1, y2, x2, y2, color);
+            this.line(x1, y1, x1, y2, color);
             ENGINE.screen.fill(color, y2 * E.canvasWidth + x1, y2 * E.canvasWidth + x2);
         },
 
         fillRect: function (x1, y1, x2, y2, color) {
-            var E = ENGINE;
+
+            x1 = x1|0;
+            x2 = x2|0;
+            y1 = y1|0;
+            y2 = y2|0;
+
+            if(x1 > x2){ //we can't have this, it'll bork the fast .fill() stuff below.
+                x1 = x1 ^ x2;
+                x2 = x1 ^ x2;
+                x1 = x1 ^ x2;  //XOR swap algorithm. https://en.wikipedia.org/wiki/XOR_swap_algorithm
+            }
+
+            //if(y1 > y2){
+            //    y1 = y1 ^ y2;
+            //    y2 = y1 ^ y2;
+            //    y1 = y1 ^ y2;
+            //}
+
             var i = Math.abs(y2 - y1);
             //var colorhex = color;
             //line(x1, y1, x2, y1, color);
-            E.screen.fill(color, y1 * E.canvasWidth + x1, y1 * E.canvasWidth + x2);
-            while (--i) {
-                //line(x1, y1+i, x2, y1+i, color);
-                E.screen.fill(color, (y1 + i) * E.canvasWidth + x1, (y1 + i) * E.canvasWidth + x2)
+            E.screen.fill(color, y1 * E.canvasWidth + x1, y1 * E.canvasWidth + x2+1);
+
+            //console.log(i);
+            if(i > 0){
+                while (--i) {
+                    //line(x1, y1+i, x2, y1+i, color);
+                    E.screen.fill(color, (y1 + i) * E.canvasWidth + x1, (y1 + i) * E.canvasWidth + x2+1)
+                }
             }
+            //console.log('exited while')
+
             //line(x1,y2, x2, y2, color);
-            E.screen.fill(color, y2 * E.canvasWidth + x1, y2 * E.canvasWidth + x2);
+            E.screen.fill(color, y2 * E.canvasWidth + x1, y2 * E.canvasWidth + x2+1);
         }
+
+    },
+
+    screenCapture: function () {
+
+        var image = E.smallcanvas.toDataURL("image/png");
+
+        window.open(image);
 
     },
 
@@ -195,7 +259,6 @@ ENGINE = {
     },
 
     render: function () {
-        var E = ENGINE;
         var i = E.data.length;
         while (i--) {
             E.data[i] = E.colors[E.screen[i]];
