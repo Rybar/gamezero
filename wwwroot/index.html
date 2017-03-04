@@ -7,17 +7,33 @@
   <style>
     
     body { margin: 0; overflow: hidden; background: #111; color: #ccc; }
+    #canvas {
+      position: absolute;
+      top:0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      cursor: none;
+
+      margin: auto;
+
+
+    }
 
   </style>
 
   <body>
   <canvas id="canvas" height="768" width="768"></canvas>
     <script src="script/lib/playground.js"></script>
-    
+    <script src="script/lib/stats.js"></script>
+
     <script src="script/engine/Engine.js"></script>
     <script src="script/engine/assets.js"></script>
     <script src="script/engine/text.js"></script>
+
     <script src="script/Game.js"></script>
+    <script src="script/Nodes.js"></script>
     <script src="script/Lines.js"></script>
     <script src="script/Main.js"></script>
 

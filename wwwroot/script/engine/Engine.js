@@ -93,7 +93,7 @@ ENGINE = {
     gfx: {
 
         clear: function(color){
-            E.screen.fill(color, 0, 256*256);
+            E.screen.fill(color, 0, 0x10000);
         },
 
         pset: function (x, y, color) { //from colors array, 0-31
@@ -240,28 +240,16 @@ ENGINE = {
                 x1 = x1 ^ x2;  //XOR swap algorithm. https://en.wikipedia.org/wiki/XOR_swap_algorithm
             }
 
-            //if(y1 > y2){
-            //    y1 = y1 ^ y2;
-            //    y2 = y1 ^ y2;
-            //    y1 = y1 ^ y2;
-            //}
-
             var i = Math.abs(y2 - y1);
-            //var colorhex = color;
             E.gfx.line(x1, y1, x2, y1, color);
-            //E.screen.fill(color, y1 * E.canvasWidth + x1, y1 * E.canvasWidth + x2+1);
 
-            //console.log(i);
             if(i > 0){
                 while (--i) {
                     E.gfx.line(x1, y1+i, x2, y1+i, color);
-                    //E.screen.fill(color, (y1 + i) * E.canvasWidth + x1, (y1 + i) * E.canvasWidth + x2+1)
                 }
             }
-            //console.log('exited while')
 
             E.gfx.line(x1,y2, x2, y2, color);
-            //E.screen.fill(color, y2 * E.canvasWidth + x1, y2 * E.canvasWidth + x2+1);
         }
 
     },
@@ -274,8 +262,35 @@ ENGINE = {
 
     },
 
-    canvasInit: function () {
+    memoryCapture: function () {
+        var tmpcanvas = document.createElement('canvas');
+        var ctx = tmpcanvas.getContext('2d');
+        tmpcanvas.width = 256;
+        tmpcanvas.height = 256;
+        var ramimage = ctx.getImageData(0,0, 256, 256);
 
+
+        var buf = new ArrayBuffer(ramimage.data.length);
+        console.log(ramimage.data.length, E.ram.length);
+        var buf8 = new Uint8ClampedArray(buf);
+        var data = new Uint32Array(buf);
+        for(var i = 0; i < data.length; i++){
+            for(var j = 0; j < 3; j++){
+                data[i] = E.ram[i*j] << 24 |
+                    E.ram[i*j+1] << 16 |
+                    E.ram[i*j+2] << 8 |
+                    E.ram[i*j+3]
+            }
+        }
+        ramimage.data.set(data);
+        ctx.putImageData(ramimage, 0,0);
+        console.log(ramimage);
+        var ramcapture = tmpcanvas.toDataURL("image/png");
+        window.open(ramcapture);
+
+    },
+
+    canvasInit: function () {
 
         E.canvas = document.getElementById('canvas');
         E.ctx = canvas.getContext('2d');
@@ -284,8 +299,8 @@ ENGINE = {
 
         E.smallcanvas = document.createElement('canvas');
         E.smallctx = E.smallcanvas.getContext('2d');
-        E.smallcanvas.width = 256 | 0;
-        E.smallcanvas.height = 256 | 0;
+        E.smallcanvas.width = 256;
+        E.smallcanvas.height = 256;
         E.canvasHeight = E.smallcanvas.height;
         E.canvasWidth = E.smallcanvas.width;
         E.imageData = E.smallctx.getImageData(0, 0, E.canvasWidth, E.canvasHeight);
@@ -293,8 +308,12 @@ ENGINE = {
         E.buf = new ArrayBuffer(E.imageData.data.length);
         E.buf8 = new Uint8ClampedArray(E.buf);
         E.data = new Uint32Array(E.buf);
+        console.log(E.buf.length, E.buf8.length, E.data.length);
         E.screen = new Uint8ClampedArray(E.imageData.data.length);
-        E.ram = new Uint8ClampedArray(256*512);
+        E.ram = new Uint8ClampedArray(0x40000);
+        E.ram.fill(0, 0, 0x10000);
+        E.ram.fill(128, 0x10000, 0x20000);
+        E.ram.fill(100, 0x20000, 0x40000);
 
 
     },
@@ -303,6 +322,9 @@ ENGINE = {
         var i = E.data.length;
         while (i--) {
             E.data[i] = E.colors[E.screen[i]];
+            if(E.ram[i]){
+                E.data[i] = E.colors[E.ram[i]];  //copy from draw buffer -? look into how to better organize this
+            }
         }
         E.imageData.data.set(E.buf8);
         E.smallctx.putImageData(E.imageData, 0, 0);
