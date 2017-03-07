@@ -1,25 +1,28 @@
 /**
- * Created by ryan on 3/6/17.
- */
-/**
  * Created by ryan on 3/3/17.
  */
-ENGINE.Game = {
+ENGINE.Paint = {
 
     create: function() {
 
         E.bgColor = 0;
         E.fgColor = 21;
-        E.t = 0;
 
         E.cursor = {
             x: 0,
             y: 0
         };
+
     },
 
     step: function(dt) {
-        E.t += dt;
+
+        // if(E.y2 < 0) E.y2 = 255;
+
+        if(this.app.mouse.left){
+            E.ram[E.cursor.y * 256 + E.cursor.x] = E.fgColor;
+        }
+
     },
 
     mousemove: function(data) {
@@ -30,11 +33,23 @@ ENGINE.Game = {
 
     },
 
+    mousedown: function(data) {
+
+        if(E.cursor.y < 9){
+            E.fgColor = E.screen[E.cursor.y * 256 + E.cursor.x];
+        }
+        else{
+            E.ram[E.cursor.y * 256 + E.cursor.x] = E.fgColor;
+        }
+
+
+
+    },
 
     keydown: function(data) {
         if (data.key == 's') {
             console.log('s pressed');
-            this.app.setState(ENGINE.Paint);
+            this.app.setState(ENGINE.Nodes);
         }
         if (data.key == 'x') {
             E.screenCapture();
@@ -44,41 +59,17 @@ ENGINE.Game = {
         }
     },
 
-    render: function(dt) {
+    render: function() {
 
-        for(var x = 0; x < 256; x++) {
-            for(var y = 0; y < 256; y++){
-                var color = (x/32+y/64 + E.t)%31;
-                E.ram.fill(color, y*256+x, y*256+x+1);
-            }
-        }
+        E.screen.fill(E.bgColor, 0, 0x10000);
 
-        var i = 1000;
-        while(i--){
-            var x = (Math.random()*256)|0;
-            var y = (Math.random()*256)|0;
-            var color = E.ram[y*256+x];
-            E.gfx.circle(x, y, 1, color  + (Math.random()*2)|0);
-        }
-
-
-
-
-
-
-
-        //this.makeColorBar();
+        this.makeColorBar();
 
         E.gfx.pset(E.cursor.x-1, E.cursor.y, 21);
         E.gfx.pset(E.cursor.x+1, E.cursor.y, 21);
         E.gfx.pset(E.cursor.x, E.cursor.y+1, 21);
         E.gfx.pset(E.cursor.x, E.cursor.y-1, 21);
 
-
-//color bars
-
-
-        //this.noise();
         E.render();
 
     },
@@ -127,6 +118,13 @@ ENGINE.Game = {
         for(var i = 0; i<32; i++) {
             E.gfx.fillRect(i*8, 0, (i*8)+8, 8, i);
         }
-    }
+    },
 
+}
+
+E.postRender = function(){
+    var i = E.data.length;
+    if(E.ram[i]){
+        E.data[i] = E.colors[E.ram[i]];  //copy from draw buffer -? look into how to better organize this
+    }
 }

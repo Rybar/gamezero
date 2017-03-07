@@ -98,7 +98,7 @@ ENGINE = {
 
         pset: function (x, y, color) { //from colors array, 0-31
             x = x|0; y = y|0;
-            color = Math.max(0, Math.min(color, 32))|0;
+            color = Math.max(0, Math.min(color, 31))|0;
 
             if (x > -1 && x < 256 && y > -1 && y < 256) {
                 ENGINE.screen[y * ENGINE.canvasWidth + x] = color;
@@ -263,6 +263,7 @@ ENGINE = {
     },
 
     memoryCapture: function () {
+
         var tmpcanvas = document.createElement('canvas');
         var ctx = tmpcanvas.getContext('2d');
         tmpcanvas.width = 256;
@@ -274,15 +275,15 @@ ENGINE = {
         console.log(ramimage.data.length, E.ram.length);
         var buf8 = new Uint8ClampedArray(buf);
         var data = new Uint32Array(buf);
-        for(var i = 0; i < data.length; i++){
-            for(var j = 0; j < 3; j++){
-                data[i] = E.ram[i*j] << 24 |
-                    E.ram[i*j+1] << 16 |
-                    E.ram[i*j+2] << 8 |
-                    E.ram[i*j+3]
-            }
-        }
-        ramimage.data.set(data);
+        //for(var i = 0; i < data.length; i++){
+        //    for(var j = 0; j < 3; j++){
+        //        data[i] = E.ram[i*j] << 24 |
+        //            E.ram[i*j+1] << 16 |
+        //            E.ram[i*j+2] << 8 |
+        //            E.ram[i*j+3]
+        //    }
+        //}
+        ramimage.data.set(E.ram);
         ctx.putImageData(ramimage, 0,0);
         console.log(ramimage);
         var ramcapture = tmpcanvas.toDataURL("image/png");
@@ -311,29 +312,37 @@ ENGINE = {
         console.log(E.buf.length, E.buf8.length, E.data.length);
         E.screen = new Uint8ClampedArray(E.imageData.data.length);
         E.ram = new Uint8ClampedArray(0x40000);
-        E.ram.fill(0, 0, 0x10000);
-        E.ram.fill(128, 0x10000, 0x20000);
-        E.ram.fill(100, 0x20000, 0x40000);
+
 
 
     },
 
     render: function () {
+
+        this.preRender();
+
+
         var i = E.data.length;
         while (i--) {
             E.data[i] = E.colors[E.screen[i]];
-            if(E.ram[i]){
-                E.data[i] = E.colors[E.ram[i]];  //copy from draw buffer -? look into how to better organize this
-            }
+
         }
+
+
         E.imageData.data.set(E.buf8);
         E.smallctx.putImageData(E.imageData, 0, 0);
         E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, 0, 0, 767, 767);
+
+        this.postRender();
     },
 
-    post: function () {
+    preRender: function () {
         //for manipulating color indexes before drawing to screen.
 
+    },
+
+    postRender: function () {
+        //post render -copying from ram, etc
     },
 
     loop: function () {
