@@ -48,8 +48,8 @@ ENGINE.Paint = {
 
     keydown: function(data) {
         if (data.key == 's') {
-            console.log('s pressed');
-            this.app.setState(ENGINE.Nodes);
+            console.log(ENGINE.currentState);
+            ENGINE.switchState();
         }
         if (data.key == 'x') {
             E.screenCapture();
@@ -57,6 +57,10 @@ ENGINE.Paint = {
         if (data.key == 'm') {
             E.memoryCapture();
         }
+    },
+
+    touchend: function(data) {
+
     },
 
     render: function() {
@@ -120,11 +124,16 @@ ENGINE.Paint = {
         }
     },
 
+    postRender: function(){
+        var i = E.data.length;
+        while(--i){
+            if(E.ram[i]){
+                E.data[i] = E.colors[E.ram[i]];  //copy from draw buffer -? look into how to better organize this
+            }
+        }
+
+    }
+
 }
 
-E.postRender = function(){
-    var i = E.data.length;
-    if(E.ram[i]){
-        E.data[i] = E.colors[E.ram[i]];  //copy from draw buffer -? look into how to better organize this
-    }
-}
+

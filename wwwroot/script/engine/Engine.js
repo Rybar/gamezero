@@ -54,6 +54,10 @@ ENGINE = {
 
     ],
 
+    renderTarget: null,
+
+    currentState: 0,
+
     //col enum
     col: {
         Black: 0,
@@ -93,7 +97,7 @@ ENGINE = {
     gfx: {
 
         clear: function(color){
-            E.screen.fill(color, 0, 0x10000);
+            E.renderTarget.fill(color, 0, 0x10000);
         },
 
         pset: function (x, y, color) { //from colors array, 0-31
@@ -101,7 +105,7 @@ ENGINE = {
             color = Math.max(0, Math.min(color, 31))|0;
 
             if (x > -1 && x < 256 && y > -1 && y < 256) {
-                ENGINE.screen[y * ENGINE.canvasWidth + x] = color;
+                E.renderTarget[y * 256 + x] = color;
             }
         },
 
@@ -313,50 +317,47 @@ ENGINE = {
         E.screen = new Uint8ClampedArray(E.imageData.data.length);
         E.ram = new Uint8ClampedArray(0x40000);
 
+        E.renderTarget = E.screen;
+
 
 
     },
 
     render: function () {
 
-        this.preRender();
+        E.preRender();
 
+
+        E.postRender();
+
+
+    },
+
+    preRender: function () {
 
         var i = E.data.length;
         while (i--) {
             E.data[i] = E.colors[E.screen[i]];
 
-        }
+        }    },
 
+    postRender: function () {
 
         E.imageData.data.set(E.buf8);
         E.smallctx.putImageData(E.imageData, 0, 0);
         E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, 0, 0, 767, 767);
 
-        this.postRender();
     },
 
-    preRender: function () {
-        //for manipulating color indexes before drawing to screen.
+    switchState: function(state) {
 
-    },
+            E.currentState += 1;
+            if(E.currentState > E.states.length-1){
+                E.currentState = 0;
+            }
+            app.setState(E.states[E.currentState]);
 
-    postRender: function () {
-        //post render -copying from ram, etc
-    },
-
-    loop: function () {
-
-        //console.log(E.counter)
-
-        stats.begin();
-        ENGINE.update();
-        ENGINE.draw();
-
-        stats.end();
-
-        requestAnimationFrame(ENGINE.loop);
-    },
+    }
 
 
 }

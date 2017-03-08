@@ -7,6 +7,8 @@ var app = new PLAYGROUND.Application({
     /* things to preload */
     ENGINE.canvasInit();
 
+    //ENGINE.app = this;
+
     //this.loadImage("giana");
 
   },
@@ -15,8 +17,7 @@ var app = new PLAYGROUND.Application({
 
     /* after preloading route events to the game state */
 
-    this.setState(ENGINE.Game);
-
+    this.setState(ENGINE.states[0])
   }
 
 });

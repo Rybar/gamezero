@@ -1,4 +1,4 @@
-ENGINE.Nodes = {
+ENGINE.Game = {
 
     create: function() {
         E.x1 = 0;
@@ -47,8 +47,8 @@ ENGINE.Nodes = {
 
     keydown: function(data) {
         if (data.key == 's') {
-            console.log('s pressed');
-            this.app.setState(ENGINE.Lines);
+            console.log(ENGINE.currentState);
+            ENGINE.switchState();
         }
         if (data.key == 'x') {
             E.screenCapture();
@@ -57,7 +57,9 @@ ENGINE.Nodes = {
 
     render: function() {
 
-        E.screen.fill(0, 0, E.screen.length);
+        E.renderTarget = E.ram;
+
+        E.gfx.clear(0);
 
 
         E.gfx.line(E.cursor.x-4, E.cursor.y, E.cursor.x+4, E.cursor.y, 11);
@@ -71,60 +73,59 @@ ENGINE.Nodes = {
             for(var i = 0; i < E.dots.length; i++){
                 var bIndex = (E.dots[i].z.map(0, 350, 0, 31))|0;
                 E.gfx.fillCircle( E.dots[i].x,  E.dots[i].y,  ((E.dots[i].z/255)*6)|0, E.brightness[bIndex]);
-                var nodeA = E.dots[i]
-                for(var j = i+1; j < E.dots.length; j++){
-
-                    var nodeB = E.dots[j];
-                    var dx = nodeB.x - nodeA.x,
-                        dy = nodeB.y - nodeA.y,
-                        dist = Math.sqrt(dx * dx + dy * dy);
-                    if(dist < 32){
-                        E.gfx.line(E.dots[i].x, E.dots[i].y, E.dots[j].x, E.dots[j].y, E.brightness[32-(dist|0)]);
-                    }
-                }
             }
 
         }
 
-//color bars
-        this.makeColorBar();
+        E.renderTarget = E.screen;
 
-        this.noise();
+        var i = 1000;
+        while(i--){
+            var x = (Math.random()*256)|0;
+            var y = (Math.random()*256)|0;
+            var color = E.ram[y*256+x];
+            E.gfx.circle(x, y, 1, color  + (Math.random()*2)|0);
+        }
+
+//color bars
+        //this.makeColorBar();
+
+        //this.noise();
         E.render();
 
     },
 
     rotate: function(points, pitch, roll, yaw) {
-    var cosa = Math.cos(yaw);
-    var sina = Math.sin(yaw);
+        var cosa = Math.cos(yaw);
+        var sina = Math.sin(yaw);
 
-    var cosb = Math.cos(pitch);
-    var sinb = Math.sin(pitch);
+        var cosb = Math.cos(pitch);
+        var sinb = Math.sin(pitch);
 
-    var cosc = Math.cos(roll);
-    var sinc = Math.sin(roll);
+        var cosc = Math.cos(roll);
+        var sinc = Math.sin(roll);
 
-    var Axx = cosa*cosb;
-    var Axy = cosa*sinb*sinc - sina*cosc;
-    var Axz = cosa*sinb*cosc + sina*sinc;
+        var Axx = cosa*cosb;
+        var Axy = cosa*sinb*sinc - sina*cosc;
+        var Axz = cosa*sinb*cosc + sina*sinc;
 
-    var Ayx = sina*cosb;
-    var Ayy = sina*sinb*sinc + cosa*cosc;
-    var Ayz = sina*sinb*cosc - cosa*sinc;
+        var Ayx = sina*cosb;
+        var Ayy = sina*sinb*sinc + cosa*cosc;
+        var Ayz = sina*sinb*cosc - cosa*sinc;
 
-    var Azx = -sinb;
-    var Azy = cosb*sinc;
-    var Azz = cosb*cosc;
+        var Azx = -sinb;
+        var Azy = cosb*sinc;
+        var Azz = cosb*cosc;
 
-    for (var i = 0; i < points.length; i++) {
-        var px = points[i].x-128;
-        var py = points[i].y-128;
-        var pz = points[i].z-128;
+        for (var i = 0; i < points.length; i++) {
+            var px = points[i].x-128;
+            var py = points[i].y-128;
+            var pz = points[i].z-128;
 
-        points[i].x = (Axx*px + Axy*py + Axz*pz)+128;
-        points[i].y = (Ayx*px + Ayy*py + Ayz*pz)+128;
-        points[i].z = (Azx*px + Azy*py + Azz*pz)+128;
-    }
+            points[i].x = (Axx*px + Axy*py + Axz*pz)+128;
+            points[i].y = (Ayx*px + Ayy*py + Ayz*pz)+128;
+            points[i].z = (Azx*px + Azy*py + Azz*pz)+128;
+        }
     },
 
     noise: function(){

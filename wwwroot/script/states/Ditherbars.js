@@ -4,7 +4,7 @@
 /**
  * Created by ryan on 3/3/17.
  */
-ENGINE.Game = {
+ENGINE.Ditherbars = {
 
     create: function() {
 
@@ -33,8 +33,8 @@ ENGINE.Game = {
 
     keydown: function(data) {
         if (data.key == 's') {
-            console.log('s pressed');
-            this.app.setState(ENGINE.Paint);
+            console.log(ENGINE.currentState);
+            ENGINE.switchState();
         }
         if (data.key == 'x') {
             E.screenCapture();
@@ -58,27 +58,9 @@ ENGINE.Game = {
             var x = (Math.random()*256)|0;
             var y = (Math.random()*256)|0;
             var color = E.ram[y*256+x];
-            E.gfx.circle(x, y, 1, color  + (Math.random()*2)|0);
+                E.gfx.circle(x, y, 1, color  + (Math.random()*2)|0);
         }
 
-
-
-
-
-
-
-        //this.makeColorBar();
-
-        E.gfx.pset(E.cursor.x-1, E.cursor.y, 21);
-        E.gfx.pset(E.cursor.x+1, E.cursor.y, 21);
-        E.gfx.pset(E.cursor.x, E.cursor.y+1, 21);
-        E.gfx.pset(E.cursor.x, E.cursor.y-1, 21);
-
-
-//color bars
-
-
-        //this.noise();
         E.render();
 
     },

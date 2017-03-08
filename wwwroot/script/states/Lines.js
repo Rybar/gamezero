@@ -33,8 +33,8 @@ ENGINE.Lines = {
 
     keydown: function(data) {
         if (data.key == 's') {
-            console.log('s pressed');
-            this.app.setState(ENGINE.Game);
+            console.log(ENGINE.currentState);
+            ENGINE.switchState();
         }
         if (data.key == 'x') {
             E.screenCapture();
