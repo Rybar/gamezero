@@ -43,8 +43,9 @@ ENGINE.Lines = {
 
     render: function() {
 
+        E.renderTarget = 0x00000;
         /* put your render calls there */
-        E.screen.fill(1, 0, E.screen.length);
+        E.gfx.clear(0);
 
         E.gfx.line(E.cursor.x-4, E.cursor.y, E.cursor.x+4, E.cursor.y, 11);
         E.gfx.line(E.cursor.x, E.cursor.y-4, E.cursor.x, E.cursor.y+4, 31);

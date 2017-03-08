@@ -57,7 +57,8 @@ ENGINE.Nodes = {
 
     render: function() {
 
-        E.screen.fill(0, 0, E.screen.length);
+        E.renderTarget = 0x00000;
+        E.gfx.clear(0);
 
 
         E.gfx.line(E.cursor.x-4, E.cursor.y, E.cursor.x+4, E.cursor.y, 11);

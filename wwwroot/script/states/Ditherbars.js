@@ -46,13 +46,15 @@ ENGINE.Ditherbars = {
 
     render: function(dt) {
 
+        E.renderTarget = 0x00000;
+
         for(var x = 0; x < 256; x++) {
             for(var y = 0; y < 256; y++){
                 var color = (x/32+y/64 + E.t)%31;
                 E.ram.fill(color, y*256+x, y*256+x+1);
             }
         }
-
+        E.renderTarget = 0x00000;
         var i = 1000;
         while(i--){
             var x = (Math.random()*256)|0;

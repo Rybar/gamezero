@@ -57,7 +57,7 @@ ENGINE.Game = {
 
     render: function() {
 
-        E.renderTarget = E.ram;
+        E.renderTarget = 0x10000;
 
         E.gfx.clear(0);
 
@@ -67,8 +67,6 @@ ENGINE.Game = {
 
 
         for(var i = 0; i < E.dots.length; i++){
-            var nodeA = E.dots[i]
-
 
             for(var i = 0; i < E.dots.length; i++){
                 var bIndex = (E.dots[i].z.map(0, 350, 0, 31))|0;
@@ -77,13 +75,13 @@ ENGINE.Game = {
 
         }
 
-        E.renderTarget = E.screen;
+        E.renderTarget = 0x00000;
 
-        var i = 1000;
+        var i = 5000;
         while(i--){
             var x = (Math.random()*256)|0;
             var y = (Math.random()*256)|0;
-            var color = E.ram[y*256+x];
+            var color = E.ram[0x10000 + (y*256+x)];
             E.gfx.circle(x, y, 1, color  + (Math.random()*2)|0);
         }
 

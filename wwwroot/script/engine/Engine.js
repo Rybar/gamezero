@@ -54,7 +54,7 @@ ENGINE = {
 
     ],
 
-    renderTarget: null,
+    renderTarget: 0x00000,
 
     currentState: 0,
 
@@ -97,7 +97,7 @@ ENGINE = {
     gfx: {
 
         clear: function(color){
-            E.renderTarget.fill(color, 0, 0x10000);
+            E.ram.fill(color, E.renderTarget, E.renderTarget+ 0x10000);
         },
 
         pset: function (x, y, color) { //from colors array, 0-31
@@ -105,7 +105,7 @@ ENGINE = {
             color = Math.max(0, Math.min(color, 31))|0;
 
             if (x > -1 && x < 256 && y > -1 && y < 256) {
-                E.renderTarget[y * 256 + x] = color;
+                E.ram[E.renderTarget + (y * 256 + x)] = color;
             }
         },
 
@@ -315,9 +315,9 @@ ENGINE = {
         E.data = new Uint32Array(E.buf);
         console.log(E.buf.length, E.buf8.length, E.data.length);
         E.screen = new Uint8ClampedArray(E.imageData.data.length);
-        E.ram = new Uint8ClampedArray(0x40000);
+        E.ram = new Uint8ClampedArray(0x80000);
 
-        E.renderTarget = E.screen;
+        E.renderTarget = 0x00000;
 
 
 
@@ -335,9 +335,10 @@ ENGINE = {
 
     preRender: function () {
 
-        var i = E.data.length;
+        var i = 0x10000;  // display is first 0x10000 bytes of ram
+
         while (i--) {
-            E.data[i] = E.colors[E.screen[i]];
+            E.data[i] = E.colors[E.ram[i]]; //data is 32bit view of final screen buffer
 
         }    },
 
