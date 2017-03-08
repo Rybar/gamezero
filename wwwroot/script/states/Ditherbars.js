@@ -46,20 +46,23 @@ ENGINE.Ditherbars = {
 
     render: function(dt) {
 
-        E.renderTarget = 0x00000;
+        E.renderTarget = 0x10000;
 
         for(var x = 0; x < 256; x++) {
             for(var y = 0; y < 256; y++){
                 var color = (x/32+y/64 + E.t)%31;
-                E.ram.fill(color, y*256+x, y*256+x+1);
+                //E.ram.fill(color, y*256+x, y*256+x+1);
+                E.gfx.pset(x, y, color);
+
             }
         }
+        
         E.renderTarget = 0x00000;
         var i = 1000;
         while(i--){
             var x = (Math.random()*256)|0;
             var y = (Math.random()*256)|0;
-            var color = E.ram[y*256+x];
+            var color = E.ram[ 0x10000 + (y*256+x) ];
                 E.gfx.circle(x, y, 1, color  + (Math.random()*2)|0);
         }
 
