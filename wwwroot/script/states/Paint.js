@@ -10,7 +10,9 @@ ENGINE.Paint = {
 
         E.cursor = {
             x: 0,
-            y: 0
+            y: 0,
+            ox: -1,
+            oy: -1
         };
         
 
@@ -32,9 +34,22 @@ ENGINE.Paint = {
         // if(E.y2 < 0) E.y2 = 255;
 
         if(this.app.mouse.left){
-            E.ram[E.cursor.y * 256 + E.cursor.x] = E.fgColor;
+            if(E.cursor.y < 9){
+            E.fgColor = E.ram[E.cursor.y * 256 + E.cursor.x];
         }
-
+        else{
+            E.renderTarget = 0x10000;
+            if(E.cursor.ox > -1){
+                E.gfx.line(E.cursor.ox, E.cursor.oy, E.cursor.x, E.cursor.y, E.fgColor);
+            }
+            E.gfx.pset(E.cursor.x, E.cursor.y, E.fgColor);
+        }
+           
+        }
+        
+    E.cursor.ox = E.cursor.x;
+    E.cursor.oy = E.cursor.y;
+    
     },
 
     mousemove: function(data) {
@@ -47,16 +62,7 @@ ENGINE.Paint = {
 
     mousedown: function(data) {
 
-        if(E.cursor.y < 9){
-            E.fgColor = E.ram[E.cursor.y * 256 + E.cursor.x];
-        }
-        else{
-            E.renderTarget = 0x10000;
-            E.gfx.pset(E.cursor.x, E.cursor.y, E.fgColor);
-        }
-
-
-
+        
     },
 
     keydown: function(data) {
