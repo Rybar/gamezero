@@ -17,7 +17,7 @@ ENGINE.Paint = {
 
     },
     
-    onEnter: function() {
+    enter: function() {
         
         E.renderTarget = 0x00000;
         E.gfx.clear(0);
@@ -53,7 +53,6 @@ ENGINE.Paint = {
         else{
             E.renderTarget = 0x10000;
             E.gfx.pset(E.cursor.x, E.cursor.y, E.fgColor);
-            E.renderTarget = 0x00000;
         }
 
 
@@ -79,13 +78,19 @@ ENGINE.Paint = {
 
     render: function() {
 
+        E.renderTarget = 0x00000;
         E.gfx.clear(0);
 
         this.makeColorBar();
 
         E.gfx.circle(E.cursor.x, E.cursor.y, 1, 21);
         
-        E.ram.copyWithin(0x00000, 0x10000-256*9, 0x20000);
+        var i = 0x10000;
+        while(i--){
+            if(E.ram[0x20000 - i] > 0){
+                E.ram[0x10000 - i] = E.ram[0x20000 - i]
+            }
+        }
 
         E.render();
 

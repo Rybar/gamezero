@@ -97,7 +97,7 @@ ENGINE = {
     gfx: {
 
         clear: function(color){
-            E.ram.fill(color, E.renderTarget, E.renderTarget+ 0x10000);
+            E.ram.fill(color, E.renderTarget, E.renderTarget + 0x10000);
         },
 
         pset: function (x, y, color) { //from colors array, 0-31
