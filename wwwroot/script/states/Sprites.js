@@ -15,6 +15,7 @@ ENGINE.Sprites = {
         E.renderTarget = E.page2;
         E.gfx.fillCircle(32+16,32+16,16,1);
         E.gfx.fillCircle(32+18,32+14,12, 12);
+        E.gfx.fillCircle(32+20,32+8, 4, 21);
         
         E.balls = [];
         
@@ -63,23 +64,29 @@ ENGINE.Sprites = {
         E.gfx.clear(3);
         
         
-        var i = E.balls.length; 
-        E.renderSource = E.page2;
-        while(--i){
-             E.gfx.spr(
+        // var i = E.balls.length; 
+        // E.renderSource = E.page2;
+        // while(--i){
+        //      E.gfx.spr(
                  
-                 32,
-                 32,
-                 32,
-                 32,
-                 E.balls[i].x,
-                 E.balls[i].y
+        //          32,
+        //          32,
+        //          32,
+        //          32,
+        //          E.balls[i].x,
+        //          E.balls[i].y
                  
-                 );
+        //          );
             
-        }
+        // }
+        E.renderSource = E.page2;
+        E.gfx.spr(32,32,32,32,32,32);
+        E.gfx.spr(32,32,32,32,32,64,false, true);
+        E.gfx.spr(32,32,32,32,64,32,true, false);
+        E.gfx.spr(32,32,32,32,64,64,true, true);
         
-        E.gfx.spr(0,0,16,16, 200, 200);
+        E.gfx.sspr(32,32,32,32, 128,128,64,64);
+        
         
         this.makeColorBar();
         

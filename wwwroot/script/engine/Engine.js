@@ -224,22 +224,11 @@ ENGINE = {
             y1 = y1|0;
             y2 = y2|0;
 
-            if(x1 > x2){ //we can't have this, it'll bork the fast .fill() stuff below.
-                x1 = x1 ^ x2;
-                x2 = x1 ^ x2;
-                x1 = x1 ^ x2;  //XOR swap algorithm. https://en.wikipedia.org/wiki/XOR_swap_algorithm
-            }
-
-            //if(y1 > y2){
-            //    y1 = y1 ^ y2;
-            //    y2 = y1 ^ y2;
-            //    y1 = y1 ^ y2;
-            //}
-
-            ENGINE.screen.fill(color, y1 * E.canvasWidth + x1, y1 * E.canvasWidth + x2);
+            
+            this.line(x1,y1, x2, y1, color);
             this.line(x2, y1, x2, y2, color);
             this.line(x1, y1, x1, y2, color);
-            ENGINE.screen.fill(color, y2 * E.canvasWidth + x1, y2 * E.canvasWidth + x2);
+            this.line(x1, y1, x2, y1, color);
         },
 
         fillRect: function (x1, y1, x2, y2, color) {
@@ -248,12 +237,6 @@ ENGINE = {
             x2 = x2|0;
             y1 = y1|0;
             y2 = y2|0;
-
-            if(x1 > x2){ //we can't have this, it'll bork the fast .fill() stuff below.
-                x1 = x1 ^ x2;
-                x2 = x1 ^ x2;
-                x1 = x1 ^ x2;  //XOR swap algorithm. https://en.wikipedia.org/wiki/XOR_swap_algorithm
-            }
 
             var i = Math.abs(y2 - y1);
             E.gfx.line(x1, y1, x2, y1, color);
@@ -267,35 +250,77 @@ ENGINE = {
             E.gfx.line(x1,y2, x2, y2, color);
         },
 
-        spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){ //flip not implemented
-
-            for(var i = 0; i < sh; i++){
+        spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){
+            
+           
+                for(var i = 0; i < sh; i++){
                 
-                for(var j = 0; j < sw; j++){
+                    for(var j = 0; j < sw; j++){
+                        
+                        if(y+i < 255 && x+j < 255 && y+i > -1 && x+j > -1){
+                            if(flipx & flipy){
+                                
+                                if(E.ram[(E.renderSource + ( ( sy + (sh-i) )*256+sx+(sw-j)))] > 0) {
+                                    
+                                //E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = 21;
+                            
+                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+(sh-i))*256+sx+(sw-j)))];
+                         
+                                }
+                                
+                            }
+                            else if(flipy && !flipx){
+                                
+                                if(E.ram[(E.renderSource + ( ( sy + (sh-i) )*256+sx+j))] > 0) {
+                            
+                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+(sh-i))*256+sx+j))];
+                         
+                                }
+                                
+                            }
+                            else if(flipx && !flipy){
+                                
+                                if(E.ram[(E.renderSource + ((sy+i)*256+sx+(sw-j)))] > 0) {
+                            
+                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+(sw-j)))];
+                         
+                                }
+                                
+                            }
+                            else if(!flipx && !flipy){
+                                
+                                if(E.ram[(E.renderSource + ((sy+i)*256+sx+j))] > 0) {
+                            
+                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+j))];
+                         
+                                }  
+                                
+                            }
+                        }
+                    }
+                }
+        },
+        
+        sspr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, dw=16, dh=16, flipx = false, flipy = false){
+            
+            var xratio = sw / dw;
+            var yratio = sh / dh;
+            
+            for(var i = 0; i < dh; i++){
+                for(var j = 0; j < dw; j++){
                     
-                    if(y+i < 255 && x+j < 255 && y+i > -1 && x+j > -1){
-                        
-                        if(E.ram[(E.renderSource + ((sy+i)*256+sx+j))] > 0) {
-                        
-                         E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+j))];
-                     
-                         }
-                        
+                    px = (j*xratio)|0;
+                    py = (i*yratio)|0;
+                    
+                    if(E.ram[(E.renderSource + ((sy+py)*256+sx+px))] > 0) {
+                    E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+py)*256+sx+px))]
                     }
                     
-                    
                 }
-
-                // E.ram.copyWithin(
-                //     (E.renderTarget + ((y+i)*256+x)),
-                //     (E.renderSource + ((sy+i)*256+sx)),
-                //     (E.renderSource + ((sy+i)*256+sx+sw))
-                // )
-
             }
-
-
-        },
+            
+            
+        }
 
     },
 
