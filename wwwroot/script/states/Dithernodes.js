@@ -1,4 +1,4 @@
-ENGINE.Game = {
+ENGINE.Dithernodes = {
 
     create: function() {
         E.x1 = 0;

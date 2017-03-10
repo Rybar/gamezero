@@ -57,13 +57,10 @@ ENGINE.Nodes = {
 
     render: function() {
 
-        E.renderTarget = 0x00000;
+        E.renderTarget = E.screen;
         E.gfx.clear(0);
 
-
-        E.gfx.line(E.cursor.x-4, E.cursor.y, E.cursor.x+4, E.cursor.y, 11);
-        E.gfx.line(E.cursor.x, E.cursor.y-4, E.cursor.x, E.cursor.y+4, 31);
-
+        E.gfx.circle(E.cursor.x, E.cursor.y, 1, E.fgColor);
 
         for(var i = 0; i < E.dots.length; i++){
             var nodeA = E.dots[i]

@@ -9,6 +9,15 @@ ENGINE = {
      000 /flags? 00000 /color -32 color index
      */
 
+    screen: 0x00000,
+    page1: 0x10000,
+    page2: 0x20000,
+    page3: 0x30000,
+    page4: 0x40000,
+    page5: 0x50000,
+    page6: 0x60000,
+    page7: 0x70000,
+
     //DB32 Palette
     colors: [0xff000000, 0xff342022, 0xff3c2845, 0xff313966, 0xff3b568f, 0xff2671df, 0xff66a0d9, 0xff9ac3ee, 0xff36f2fb,
         0xff50e599, 0xff30be6a, 0xff6e9437, 0xff2f694b, 0xff244b52, 0xff393c32, 0xff743f3f, 0xff826030, 0xffe16e5b,
@@ -17,7 +26,7 @@ ENGINE = {
 
     brightness: [0,1,2,14,3,15,13,27,26,25,16,4,12,24.31,28,17,23,11,5,30,29,18,6,10,22,19,7,9,20,8,21],
 
-    colorLUT: [
+    colorLUT: t[
       //0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
         00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,
         00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,
@@ -55,6 +64,8 @@ ENGINE = {
     ],
 
     renderTarget: 0x00000,
+
+    renderSource: 0x10000,
 
     currentState: 0,
 
@@ -168,7 +179,6 @@ ENGINE = {
             /* II. Quadrant */
             do {
 
-
                 this.pset(xm - x, ym + y, color);
                 /*   I. Quadrant */
                 this.pset(xm - y, ym - x, color);
@@ -182,6 +192,7 @@ ENGINE = {
                 /* e_xy+e_y < 0 */
                 if (r > x || err > y) err += ++x * 2 + 1;
                 /* e_xy+e_x > 0 or no 2nd y-step */
+
             } while (x < 0);
         },
 
@@ -254,7 +265,22 @@ ENGINE = {
             }
 
             E.gfx.line(x1,y2, x2, y2, color);
-        }
+        },
+
+        spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){
+
+            for(var i = 0; i < sh; i++){
+
+                E.ram.copyWithin(
+                    (E.renderTarget + ((y+i)*256+x)),
+                    (E.renderSource + ((sy+i)*256+sx)),
+                    (E.renderSource + ((sy+i)*256+sx+sw))
+                )
+
+            }
+
+
+        },
 
     },
 
@@ -279,14 +305,7 @@ ENGINE = {
         console.log(ramimage.data.length, E.ram.length);
         var buf8 = new Uint8ClampedArray(buf);
         var data = new Uint32Array(buf);
-        //for(var i = 0; i < data.length; i++){
-        //    for(var j = 0; j < 3; j++){
-        //        data[i] = E.ram[i*j] << 24 |
-        //            E.ram[i*j+1] << 16 |
-        //            E.ram[i*j+2] << 8 |
-        //            E.ram[i*j+3]
-        //    }
-        //}
+
         ramimage.data.set(E.ram);
         ctx.putImageData(ramimage, 0,0);
         console.log(ramimage);
@@ -317,7 +336,7 @@ ENGINE = {
         E.screen = new Uint8ClampedArray(E.imageData.data.length);
         E.ram = new Uint8ClampedArray(0x80000);
 
-        E.renderTarget = 0x00000;
+        E.renderTarget = E.screen;
 
 
 
@@ -325,28 +344,17 @@ ENGINE = {
 
     render: function () {
 
-        E.preRender();
-
-
-        E.postRender();
-
-
-    },
-
-    preRender: function () {
-
         var i = 0x10000;  // display is first 0x10000 bytes of ram
 
         while (i--) {
             E.data[i] = E.colors[E.ram[i]]; //data is 32bit view of final screen buffer
 
-        }    },
-
-    postRender: function () {
+        }
 
         E.imageData.data.set(E.buf8);
         E.smallctx.putImageData(E.imageData, 0, 0);
         E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, 0, 0, 767, 767);
+
 
     },
 
