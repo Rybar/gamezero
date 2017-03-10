@@ -38,7 +38,7 @@ ENGINE.Paint = {
             E.fgColor = E.ram[E.cursor.y * 256 + E.cursor.x];
         }
         else{
-            E.renderTarget = 0x10000;
+            E.renderTarget = E.page2;
             if(E.cursor.ox > -1){
                 E.gfx.line(E.cursor.ox, E.cursor.oy, E.cursor.x, E.cursor.y, E.fgColor);
             }
@@ -89,14 +89,16 @@ ENGINE.Paint = {
 
         this.makeColorBar();
 
-        E.gfx.circle(E.cursor.x, E.cursor.y, 1, 21);
+        
         
         var i = 0x10000;
         while(i--){
-            if(E.ram[0x20000 - i] > 0){
-                E.ram[0x10000 - i] = E.ram[0x20000 - i]
+            if(E.ram[0x30000 - i] > 0){
+                E.ram[0x10000 - i] = E.ram[0x30000 - i]
             }
         }
+        
+        E.gfx.circle(E.cursor.x, E.cursor.y, 1, 21);
 
         E.render();
 

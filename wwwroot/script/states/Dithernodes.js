@@ -57,7 +57,7 @@ ENGINE.Dithernodes = {
 
     render: function() {
 
-        E.renderTarget = 0x10000;
+        E.renderTarget = E.page1;
 
         E.gfx.clear(0);
 

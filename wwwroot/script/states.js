@@ -3,7 +3,8 @@
  */
 ENGINE.states = [
 
-    ENGINE.Game,
+    ENGINE.Sprites,
+    ENGINE.Dithernodes,
     ENGINE.Paint,
     ENGINE.Ditherbars,
     ENGINE.Nodes,

@@ -26,7 +26,7 @@ ENGINE = {
 
     brightness: [0,1,2,14,3,15,13,27,26,25,16,4,12,24.31,28,17,23,11,5,30,29,18,6,10,22,19,7,9,20,8,21],
 
-    colorLUT: t[
+    colorLUT: [
       //0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
         00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,
         00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,
@@ -267,15 +267,30 @@ ENGINE = {
             E.gfx.line(x1,y2, x2, y2, color);
         },
 
-        spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){
+        spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){ //flip not implemented
 
             for(var i = 0; i < sh; i++){
+                
+                for(var j = 0; j < sw; j++){
+                    
+                    if(y+i < 255 && x+j < 255 && y+i > -1 && x+j > -1){
+                        
+                        if(E.ram[(E.renderSource + ((sy+i)*256+sx+j))] > 0) {
+                        
+                         E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+j))];
+                     
+                         }
+                        
+                    }
+                    
+                    
+                }
 
-                E.ram.copyWithin(
-                    (E.renderTarget + ((y+i)*256+x)),
-                    (E.renderSource + ((sy+i)*256+sx)),
-                    (E.renderSource + ((sy+i)*256+sx+sw))
-                )
+                // E.ram.copyWithin(
+                //     (E.renderTarget + ((y+i)*256+x)),
+                //     (E.renderSource + ((sy+i)*256+sx)),
+                //     (E.renderSource + ((sy+i)*256+sx+sw))
+                // )
 
             }
 
@@ -303,7 +318,7 @@ ENGINE = {
 
         var buf = new ArrayBuffer(ramimage.data.length);
         console.log(ramimage.data.length, E.ram.length);
-        var buf8 = new Uint8ClampedArray(buf);
+        //var buf8 = new Uint8ClampedArray(buf);
         var data = new Uint32Array(buf);
 
         ramimage.data.set(E.ram);
@@ -333,7 +348,6 @@ ENGINE = {
         E.buf8 = new Uint8ClampedArray(E.buf);
         E.data = new Uint32Array(E.buf);
         console.log(E.buf.length, E.buf8.length, E.data.length);
-        E.screen = new Uint8ClampedArray(E.imageData.data.length);
         E.ram = new Uint8ClampedArray(0x80000);
 
         E.renderTarget = E.screen;
