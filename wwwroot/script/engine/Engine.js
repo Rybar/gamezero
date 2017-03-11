@@ -276,9 +276,10 @@ ENGINE = {
                     
                     px = (j*xratio)|0;
                     py = (i*yratio)|0;
-                    
-                    if(E.ram[(E.renderSource + ((sy+py)*256+sx+px))] > 0) {
-                    E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+py)*256+sx+px))]
+                    if(y+i < 255 && x+j < 255 && y+i > -1 && x+j > -1) {
+                        if (E.ram[(E.renderSource + ((sy + py) * 256 + sx + px))] > 0) {
+                            E.ram[(E.renderTarget + ((y + i) * 256 + x + j))] = E.ram[(E.renderSource + ((sy + py) * 256 + sx + px))]
+                        }
                     }
                     
                 }
