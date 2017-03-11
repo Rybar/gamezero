@@ -18,12 +18,23 @@ ENGINE.Sprites = {
         E.gfx.fillCircle(32+20,32+8, 4, 21);
         
         E.balls = [];
+
+        E.t = 0;
+        E.speedx = 2.1;
+        E.speedy = 2.15;
+        E.speedz = 2.1;
+        E.rangex = 80;
+        E.rangey = 80;
+        E.rangez = 6;
+
         
-        var i = 1000;
+        var i = 100;
         while(i--){
             E.balls.push({
-                x: (Math.random()*255)|0,
-                y: (Math.random()*255)|0
+                x: 0,
+                y: 0,
+                z: 0,
+                offset: i/2
             })
         }
     },
@@ -33,10 +44,11 @@ ENGINE.Sprites = {
         
         var i = E.balls.length;
         while(--i){
-            E.balls[i].x += (Math.random() * 4 - 2)|0;
-            E.balls[i].y += (Math.random() * 4 - 2)|0;
-            
+            E.balls[i].x  = 110 + Math.floor(Math.sin((E.t + E.balls[i].offset) * E.speedx) * E.rangex);
+            E.balls[i].y  = 110 + Math.floor(Math.sin((E.t + E.balls[i].offset) * E.speedy) * E.rangey);
+            E.balls[i].z  = 12 + Math.floor(Math.sin((E.t + E.balls[i].offset) * E.speedz) * E.rangez);
         }
+        E.balls.sort(function(a,b){return b.z - a.z});
     },
     
     enter: function(dt) {
@@ -84,8 +96,16 @@ ENGINE.Sprites = {
         E.gfx.spr(32,32,32,32,32,64,false, true);
         E.gfx.spr(32,32,32,32,64,32,true, false);
         E.gfx.spr(32,32,32,32,64,64,true, true);
+
+        //console.log(E.t);
         
-        E.gfx.sspr(32,32,32,32, 128,128,64,64);
+        var i = E.balls.length;
+        while(--i){
+            E.gfx.sspr(32,32,32,32, E.balls[i].x, E.balls[i].y, E.balls[i].z, E.balls[i].z);
+        }
+
+
+
         
         
         this.makeColorBar();
