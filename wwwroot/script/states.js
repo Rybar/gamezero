@@ -3,6 +3,7 @@
  */
 ENGINE.states = [
 
+    ENGINE.Tunnel,
     ENGINE.Sprites,
     ENGINE.Dithernodes,
     ENGINE.Paint,

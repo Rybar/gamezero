@@ -192,8 +192,8 @@ ENGINE = {
             
             this.line(x1,y1, x2, y1, color);
             this.line(x2, y1, x2, y2, color);
+            this.line(x1, y2, x2, y2, color);
             this.line(x1, y1, x1, y2, color);
-            this.line(x1, y1, x2, y1, color);
         },
 
         fillRect: function (x1, y1, x2, y2, color) {
@@ -276,6 +276,7 @@ ENGINE = {
                     
                     px = (j*xratio)|0;
                     py = (i*yratio)|0;
+
                     if(y+i < 255 && x+j < 255 && y+i > -1 && x+j > -1) {
                         if (E.ram[(E.renderSource + ((sy + py) * 256 + sx + px))] > 0) {
                             E.ram[(E.renderTarget + ((y + i) * 256 + x + j))] = E.ram[(E.renderSource + ((sy + py) * 256 + sx + px))]

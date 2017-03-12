@@ -13,6 +13,8 @@ ENGINE.Sprites = {
             y: 0
         };
         E.renderTarget = E.page2;
+
+        //lets make a ball
         E.gfx.fillCircle(32+16,32+16,15,1);
         E.gfx.fillCircle(32+16,32+16,13, 2);
         E.gfx.fillCircle(32+17,32+15,11, 3);
