@@ -386,7 +386,9 @@ ENGINE = {
 
         E.imageData.data.set(E.buf8);
         E.smallctx.putImageData(E.imageData, 0, 0);
-        E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, 0, 0, 767, 767);
+        //E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, 0, 0, 767, 767);
+        E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255,0,0,512,512);
+
 
 
     },
