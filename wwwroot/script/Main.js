@@ -2,6 +2,14 @@ var app = new PLAYGROUND.Application({
 
   smoothing: false,
 
+  preload: function() {
+
+    this.loadImage('spritefont');
+    console.log(this.images);
+
+
+  },
+
   create: function() {
 
     /* things to preload */

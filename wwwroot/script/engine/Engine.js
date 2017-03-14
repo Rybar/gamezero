@@ -291,9 +291,34 @@ ENGINE = {
 
     },
 
-    screenCapture: function () {
+    imagetoRam: function(image, address) {
 
-        var image = E.smallcanvas.toDataURL("image/png");
+        let tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 256;
+        tempCanvas.height = 256;
+        let context = tempCanvas.getContext('2d');
+        //draw image to canvas
+        context.drawImage(image, 0, 0);
+
+        //get image data
+        var imageData = context.getImageData(0,0, 256, 256);
+
+        //set up 32bit view of buffer
+        let data = new Uint32Array(imageData.data.buffer);
+
+        //compare buffer to palette (loop)
+        for(var i = 0; i < data.length; i++) {
+
+            E.ram[address + i] = E.colors.indexOf(data[i]);
+            //console.log(data[i]);
+        }
+
+
+    },
+
+    screenCapture: function (canvas) {
+
+        var image = canvas.toDataURL("image/png");
 
         window.open(image);
 
@@ -301,23 +326,25 @@ ENGINE = {
 
     memoryCapture: function () {
 
-        var tmpcanvas = document.createElement('canvas');
-        var ctx = tmpcanvas.getContext('2d');
-        tmpcanvas.width = 256;
-        tmpcanvas.height = 256;
-        var ramimage = ctx.getImageData(0,0, 256, 256);
+        console.log(E.ram);
 
-
-        var buf = new ArrayBuffer(ramimage.data.length);
-        console.log(ramimage.data.length, E.ram.length);
-        //var buf8 = new Uint8ClampedArray(buf);
-        var data = new Uint32Array(buf);
-
-        ramimage.data.set(E.ram);
-        ctx.putImageData(ramimage, 0,0);
-        console.log(ramimage);
-        var ramcapture = tmpcanvas.toDataURL("image/png");
-        window.open(ramcapture);
+        //var tmpcanvas = document.createElement('canvas');
+        //var ctx = tmpcanvas.getContext('2d');
+        //tmpcanvas.width = 256;
+        //tmpcanvas.height = 256;
+        //var ramimage = ctx.getImageData(0,0, 256, 256);
+        //
+        //
+        //var buf = new ArrayBuffer(ramimage.data.length);
+        //console.log(ramimage.data.length, E.ram.length);
+        ////var buf8 = new Uint8ClampedArray(buf);
+        //var data = new Uint32Array(buf);
+        //
+        //ramimage.data.set(E.ram);
+        //ctx.putImageData(ramimage, 0,0);
+        //console.log(ramimage);
+        //var ramcapture = tmpcanvas.toDataURL("image/png");
+        //window.open(ramcapture);
 
     },
 
@@ -339,7 +366,7 @@ ENGINE = {
         E.buf = new ArrayBuffer(E.imageData.data.length);
         E.buf8 = new Uint8ClampedArray(E.buf);
         E.data = new Uint32Array(E.buf);
-        console.log(E.buf.length, E.buf8.length, E.data.length);
+       // console.log(E.buf.length, E.buf8.length, E.data.length);
         E.ram = new Uint8ClampedArray(0x80000);
 
         E.renderTarget = E.screen;
