@@ -17,6 +17,11 @@ ENGINE.ImageRam = {
         };
 
         E.imagetoRam(this.app.images.spritefont, E.page1);
+        //console.log(E.ram[E.page1 + 10])
+    },
+    
+    enter: function() {
+        E.imagetoRam(this.app.images.spritefont, E.page1);
         console.log(E.ram[E.page1 + 10])
     },
 
