@@ -7,19 +7,17 @@
 ENGINE.txt = {
     textLine: function (opt) {
         //
-        gl = opt.glitch || {};
-
-
+    
         var textLength = opt.text.length,
-            size = 5;
+            charWidth = 5;
+            charHeight = 5;
         for (var i = 0; i < textLength; i++) {
             var letter = Assets.letters[( opt.text.charAt(i) )] || Assets.letters['unknown'];
             for (var y = 0; y < size; y++) {
                 //var g = (Math.random() > opt.glitchChance) * opt.glitchFactor;
                 for (var x = 0; x < size; x++) {
                     if (letter[y][x] === 1) {
-                        var gx = (Math.random() < gl.xch || 0) * (Math.random()-.5) * gl.xamt || 0;
-                        var gy = (Math.random() < gl.ych || 0) * (Math.random()-.5) * gl.yamt || 0;
+                    
                         //if(g)
                         opt.ctx.fillRect(opt.x + ( x * opt.scale ) + gx + ( ( size * opt.scale ) + opt.hspacing ) * i, opt.y + (y * opt.scale) + gy, opt.scale, opt.scale);
                     }

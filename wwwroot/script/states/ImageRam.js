@@ -16,13 +16,13 @@ ENGINE.ImageRam = {
             y: 0
         };
 
-        E.imagetoRam(this.app.images.spritefont, E.page1);
+        //E.imagetoRam(this.app.images.spritefont, E.page1);
         //console.log(E.ram[E.page1 + 10])
     },
     
     enter: function() {
         E.imagetoRam(this.app.images.spritefont, E.page1);
-        console.log(E.ram[E.page1 + 10])
+        //console.log(E.ram[E.page1 + 10])
     },
 
 
@@ -66,6 +66,8 @@ ENGINE.ImageRam = {
 
 
         this.makeColorBar();
+        
+        E.gfx.spr(0,0,5,7,64,64);
 
         E.render();
 
