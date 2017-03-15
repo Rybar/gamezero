@@ -44,6 +44,11 @@ ENGINE.Ditherbars = {
         }
     },
 
+    touchend: function(data){
+        ENGINE.switchState();
+    },
+
+
     render: function(dt) {
 
         E.renderTarget = 0x10000;

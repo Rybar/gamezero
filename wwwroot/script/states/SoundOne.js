@@ -4,7 +4,7 @@
 /**
  * Created by ryan on 3/3/17.
  */
-ENGINE.Game = {
+ENGINE.SoundOne = {
 
     create: function() {
 
@@ -33,19 +33,21 @@ ENGINE.Game = {
         }
     },
 
-    touchend: function(data){
-        ENGINE.switchState();
-    },
-
-
     render: function(dt) {
 
         E.gfx.clear(1);
 
+
         this.makeColorBar();
+
+        E.gfx.circle(E.cursor.x, E.cursor.y, 1, 21);
 
         E.render();
 
+    },
+
+    touchend: function(data){
+        ENGINE.switchState();
     },
 
     makeColorBar: function(){

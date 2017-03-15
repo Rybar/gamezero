@@ -50,6 +50,11 @@ ENGINE.ImageRam = {
 
     },
 
+    touchend: function(data){
+        ENGINE.switchState();
+    },
+
+
     render: function(dt) {
 
         //E.gfx.clear(1);

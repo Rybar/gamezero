@@ -78,9 +78,10 @@ ENGINE.Paint = {
         }
     },
 
-    touchend: function(data) {
-
+    touchend: function(data){
+        ENGINE.switchState();
     },
+
 
     render: function() {
 
