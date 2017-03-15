@@ -40,7 +40,7 @@ ENGINE.Life = {
         ENGINE.switchState();
     },
 
-   git enter: function() {
+   enter: function() {
         var i = 256;
         while(--i){
             E.gfx.pset(i,0, Math.floor(Math.random()*2))
