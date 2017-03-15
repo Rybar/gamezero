@@ -1,6 +1,17 @@
 ENGINE = {
     E: this,
 
+    extend: function(obj) {
+    each(slice.call(arguments, 1), function(source) {
+        if (source) {
+            for (var prop in source) {
+                obj[prop] = source[prop];
+            }
+        }
+    });
+    return obj;
+    },
+
     /*
      screen memory
 
@@ -291,6 +302,29 @@ ENGINE = {
 
     },
 
+    UIObject: {
+        intersects: function(obj, mouse) {
+            var t = 5; //tolerance
+            var xIntersect = (mouse.x + t) > obj.x && (mouse.x - t) < obj.x + obj.width;
+            var yIntersect = (mouse.y + t) > obj.y && (mouse.y - t) < obj.y + obj.height;
+            return  xIntersect && yIntersect;
+        },
+        updateStats: function(canvas){
+            if (this.intersects(this, canvas.mouse)) {
+                this.hovered = true;
+                if (canvas.mouse.clicked) {
+                    this.clicked = true;
+                }
+            } else {
+                this.hovered = false;
+            }
+
+            if (!canvas.mouse.down) {
+                this.clicked = false;
+            }
+        }
+    },
+
     imagetoRam: function(image, address) {
 
         let tempCanvas = document.createElement('canvas');
@@ -308,7 +342,7 @@ ENGINE = {
 
         //compare buffer to palette (loop)
         for(var i = 0; i < data.length; i++) {
-
+            //set ram to color index
             E.ram[address + i] = E.colors.indexOf(data[i]);
             //console.log(data[i]);
         }

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+    	<title>Game Menu</title>
+        <script src="js/underscore.js"></script>
+        <script src="js/game_engine.js"></script>
+        <script src="js/ui_base.js"></script>
+        <script src="js/button.js"></script>
+        <script src="js/checkbox.js"></script>
+        <script src="js/slider.js"></script>
+    </head>
+    <body>
+        <canvas id="game" width="600" height="400" style="width:600px;height:400px;">
+        </canvas>
+        <div id="percentBox"></div>
+        <script type="application/javascript">
+            var canvasElement = document.getElementById("game");
+            var engine = new GameEngine(canvasElement, 30);
+            
+            var alertButton = new Button("Alert", 45, 50, 160, 40);
+            alertButton.timesClicked = 0;
+            alertButton.handler = function(){
+                this.timesClicked++;
+                alert("This button has been clicked " + this.timesClicked + " time(s)!");
+            };
+            
+            var percentDiv = document.getElementById("percentBox");
+            var DOMSlider = new Slider(45, 150, 260, 20, 200);
+            DOMSlider.handler = function(value) {
+            	var text = value + "%";
+                percentDiv.innerHTML = text;
+            }
+            
+            var backCheckBox = new CheckBox(45, 250);
+            backCheckBox.checked = true;
+            backCheckBox.handler = function(checked){
+                var color = (checked) ? "#FFF" : "#E8B70C";
+                document.body.style.backgroundColor = color;
+            }
+            
+            engine.gameObjects.push(alertButton);
+            engine.gameObjects.push(DOMSlider);
+            engine.gameObjects.push(backCheckBox);
+            
+            engine.run();
+        </script>
+    </body>
+</html>

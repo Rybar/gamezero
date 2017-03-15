@@ -3,6 +3,8 @@
  */
 ENGINE.states = [
 
+
+    ENGINE.Life,
     ENGINE.SoundOne,
     ENGINE.ImageRam,
     ENGINE.Tunnel,
