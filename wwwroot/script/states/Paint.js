@@ -60,8 +60,8 @@ ENGINE.Paint = {
     mousemove: function(data) {
 
         var rect = E.canvas.getBoundingClientRect();
-        E.cursor.x = ( ( (data.x - rect.left)/2) |0 );
-        E.cursor.y = ( ( (data.y - rect.top) /2) |0 );
+        E.cursor.x = ( ( (data.x - rect.left)/ (E.compositeSize / 256) ) |0 );
+        E.cursor.y = ( ( (data.y - rect.top) / (E.compositeSize /256) ) |0 );
 
     },
 

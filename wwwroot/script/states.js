@@ -3,10 +3,10 @@
  */
 ENGINE.states = [
 
-    ENGINE.SoundOne,
 
-    ENGINE.Life,
     ENGINE.ImageRam,
+    ENGINE.SoundOne,
+    ENGINE.Life,
     ENGINE.Tunnel,
     ENGINE.Sprites,
     ENGINE.Dithernodes,
