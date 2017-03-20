@@ -14,19 +14,24 @@ ENGINE.Paint = {
             ox: -1,
             oy: -1
         };
-        
+
 
 
     },
-    
+
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+
     enter: function() {
-        
+
         E.renderTarget = 0x00000;
         E.gfx.clear(0);
         E.renderTarget = 0x10000;
         E.gfx.clear(0);
         E.renderTarget = 0x00000;
-        
+
     },
 
     step: function(dt) {
@@ -44,12 +49,12 @@ ENGINE.Paint = {
             }
             E.gfx.pset(E.cursor.x, E.cursor.y, E.fgColor);
         }
-           
+
         }
-        
+
     E.cursor.ox = E.cursor.x;
     E.cursor.oy = E.cursor.y;
-    
+
     },
 
     mousemove: function(data) {
@@ -62,7 +67,7 @@ ENGINE.Paint = {
 
     mousedown: function(data) {
 
-        
+
     },
 
     keydown: function(data) {
@@ -90,15 +95,15 @@ ENGINE.Paint = {
 
         this.makeColorBar();
 
-        
-        
+
+
         var i = 0x10000;
         while(i--){
             if(E.ram[0x30000 - i] > 0){
                 E.ram[0x10000 - i] = E.ram[0x30000 - i]
             }
         }
-        
+
         E.gfx.circle(E.cursor.x, E.cursor.y, 1, 21);
 
         E.render();
@@ -119,5 +124,3 @@ ENGINE.Paint = {
     }
 
 }
-
-

@@ -34,7 +34,7 @@ ENGINE.Sprites = {
         E.rangey = 60;
         E.rangez = 60;
 
-        
+
         var i = 100;
         while(i--){
             E.balls.push({
@@ -46,9 +46,14 @@ ENGINE.Sprites = {
         }
     },
 
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+
     step: function(dt) {
         E.t += dt;
-        
+
         var i = E.balls.length;
         //E.speedx = 2.135 + Math.sin()
         while(--i){
@@ -59,9 +64,9 @@ ENGINE.Sprites = {
         this.rotate(E.balls, E.t/3, E.t/4, E.t/2);
         E.balls.sort(function(a,b){return b.z - a.z});
     },
-    
+
     enter: function(dt) {
-        
+
     },
 
     mousemove: function(data) {
@@ -83,22 +88,22 @@ ENGINE.Sprites = {
     render: function(dt) {
         E.renderTarget = E.screen;
         E.gfx.clear(0);
-        
-        
-        // var i = E.balls.length; 
+
+
+        // var i = E.balls.length;
         // E.renderSource = E.page2;
         // while(--i){
         //      E.gfx.spr(
-                 
+
         //          32,
         //          32,
         //          32,
         //          32,
         //          E.balls[i].x,
         //          E.balls[i].y
-                 
+
         //          );
-            
+
         // }
         E.renderSource = E.page2;
         //E.gfx.spr(32,32,32,32,32,32);
@@ -107,7 +112,7 @@ ENGINE.Sprites = {
         //E.gfx.spr(32,32,32,32,64,64,true, true);
 
         //console.log(E.t);
-        
+
         var i = E.balls.length;
         while(--i){
             E.gfx.sspr(
@@ -122,12 +127,12 @@ ENGINE.Sprites = {
             32,32,32,32,
             220,220,32,32)
         this.makeColorBar();
-        
+
         E.render();
 
     },
 
-    
+
     makeColorBar: function(){
         for(var i = 0; i<32; i++) {
             E.gfx.fillRect(i*8, 0, (i*8)+8, 8, i);

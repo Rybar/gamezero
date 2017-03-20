@@ -26,6 +26,11 @@ ENGINE.Nodes = {
         }
     },
 
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+    
     step: function(dt) {
 
         this.rotate(E.dots, 0.0095, 0.000, 0.009);

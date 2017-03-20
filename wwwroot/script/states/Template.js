@@ -14,6 +14,11 @@ ENGINE.Game = {
         };
     },
 
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+
     step: function(dt) {
         E.t += dt;
     },

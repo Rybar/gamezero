@@ -5,7 +5,7 @@
   <title>Game Zero</title>
 
   <style>
-    
+
     body { margin: 0; overflow: hidden; background: #111; color: #ccc; }
     #canvas {
       position: absolute;
@@ -13,14 +13,17 @@
       bottom: 0;
       left: 0;
       right: 0;
-      
-      image-rendering: optimizeSpeed;             
-      image-rendering: -moz-crisp-edges;          
-      image-rendering: -webkit-optimize-contrast; 
-      image-rendering: -o-crisp-edges;           
-      image-rendering: pixelated;                 
-      -ms-interpolation-mode: nearest-neighbor;  
-      
+
+      width: 100%;
+      height: 100%;
+
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: -o-crisp-edges;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
+
       cursor: none;
 
       margin: auto;
@@ -31,7 +34,7 @@
   </style>
 
   <body>
-  <canvas id="canvas" height="768" width="768"></canvas>
+  <canvas id="canvas"></canvas>
 
 
   <script src="script/engine/Engine.js"></script>

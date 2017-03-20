@@ -200,7 +200,7 @@ ENGINE = {
             y1 = y1|0;
             y2 = y2|0;
 
-            
+
             this.line(x1,y1, x2, y1, color);
             this.line(x2, y1, x2, y2, color);
             this.line(x1, y2, x2, y2, color);
@@ -227,64 +227,64 @@ ENGINE = {
         },
 
         spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){
-            
-           
+
+
                 for(var i = 0; i < sh; i++){
-                
+
                     for(var j = 0; j < sw; j++){
-                        
+
                         if(y+i < 255 && x+j < 255 && y+i > -1 && x+j > -1){
                             if(flipx & flipy){
-                                
+
                                 if(E.ram[(E.renderSource + ( ( sy + (sh-i) )*256+sx+(sw-j)))] > 0) {
-                                    
+
                                 //E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = 21;
-                            
+
                                 E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+(sh-i))*256+sx+(sw-j)))];
-                         
+
                                 }
-                                
+
                             }
                             else if(flipy && !flipx){
-                                
+
                                 if(E.ram[(E.renderSource + ( ( sy + (sh-i) )*256+sx+j))] > 0) {
-                            
+
                                 E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+(sh-i))*256+sx+j))];
-                         
+
                                 }
-                                
+
                             }
                             else if(flipx && !flipy){
-                                
+
                                 if(E.ram[(E.renderSource + ((sy+i)*256+sx+(sw-j)))] > 0) {
-                            
+
                                 E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+(sw-j)))];
-                         
+
                                 }
-                                
+
                             }
                             else if(!flipx && !flipy){
-                                
+
                                 if(E.ram[(E.renderSource + ((sy+i)*256+sx+j))] > 0) {
-                            
+
                                 E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+j))];
-                         
-                                }  
-                                
+
+                                }
+
                             }
                         }
                     }
                 }
         },
-        
+
         sspr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, dw=16, dh=16, flipx = false, flipy = false){
-            
+
             var xratio = sw / dw;
             var yratio = sh / dh;
-            
+
             for(var i = 0; i < dh; i++){
                 for(var j = 0; j < dw; j++){
-                    
+
                     px = (j*xratio)|0;
                     py = (i*yratio)|0;
 
@@ -293,11 +293,11 @@ ENGINE = {
                             E.ram[(E.renderTarget + ((y + i) * 256 + x + j))] = E.ram[(E.renderSource + ((sy + py) * 256 + sx + px))]
                         }
                     }
-                    
+
                 }
             }
-            
-            
+
+
         }
 
     },
@@ -386,6 +386,8 @@ ENGINE = {
 
         E.canvas = document.getElementById('canvas');
         E.ctx = canvas.getContext('2d');
+        E.canvas.width = window.innerWidth;
+        E.canvas.height = window.innerHeight;
         E.ctx.imageSmoothingEnabled = false;
         E.ctx.mozImageSmoothingEnabled = false;
 
@@ -419,9 +421,17 @@ ENGINE = {
         }
 
         E.imageData.data.set(E.buf8);
+
         E.smallctx.putImageData(E.imageData, 0, 0);
-        E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, 0, 0, 767, 767);
-        //E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255,0,0,512,512);
+        //E.ctx.putImageData(E.imageData, 0, 0);
+
+        //E.ctx.drawImage(E.smallcanvas, 0, 0);
+        E.compositeSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+        E.compositeOrigin = ( (window.innerWidth - E.compositeSize)/2)|0;
+        E.ctx.imageSmoothingEnabled = false;
+        E.ctx.mozImageSmoothingEnabled = false;
+
+        E.ctx.drawImage(E.smallcanvas, 0, 0, 255, 255, E.compositeOrigin, 0, E.compositeSize, E.compositeSize);
 
 
 

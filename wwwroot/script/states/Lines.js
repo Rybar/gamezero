@@ -16,6 +16,11 @@ ENGINE.Lines = {
         }
     },
 
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+
     step: function(dt) {
 
         this.rotate(E.dots, 0.02, 0.008, 0.015);

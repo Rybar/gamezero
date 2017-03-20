@@ -18,6 +18,11 @@ ENGINE.Ditherbars = {
         };
     },
 
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+
     step: function(dt) {
         E.t += dt;
     },
@@ -61,7 +66,7 @@ ENGINE.Ditherbars = {
 
             }
         }
-        
+
         E.renderTarget = 0x00000;
         var i = 1000;
         while(i--){

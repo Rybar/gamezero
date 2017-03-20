@@ -19,7 +19,7 @@ var app = new PLAYGROUND.Application({
 
     //this.loadImage("giana");
 
-    var audioContext = new(window.AudioContext || window.webkitAudioContext);
+    E.audioContext = new(window.AudioContext || window.webkitAudioContext);
 
   },
 

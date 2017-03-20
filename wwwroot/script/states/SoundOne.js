@@ -12,6 +12,13 @@ ENGINE.SoundOne = {
             x: 0,
             y: 0
         };
+
+
+    },
+
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
     },
 
     step: function(dt) {
@@ -27,9 +34,26 @@ ENGINE.SoundOne = {
     },
 
 
+
+
     keydown: function(data) {
         if (data.key == 's') {
             ENGINE.switchState();
+        }
+
+    },
+    keyup: function(data) {
+        if (data.key == 'n'){
+
+            if(E.playing){
+                E.osc.stop();
+                E.playing = false;
+            }
+            else{
+                this.playSound();
+                E.playing = true;
+            }
+
         }
     },
 
@@ -54,6 +78,20 @@ ENGINE.SoundOne = {
         for(var i = 0; i<32; i++) {
             E.gfx.fillRect(i*8, 0, (i*8)+8, 8, i);
         }
+    },
+
+    playSound: function(){
+        E.osc = E.audioContext.createOscillator();
+        E.gain = E.audioContext.createGain();
+
+        E.osc.type = 'triangle';
+        E.osc.frequency = 440;
+        E.gain.gain.value = .5;
+
+        E.gain.connect(E.audioContext.destination)
+        E.osc.connect(E.gain);
+
+        E.osc.start();
     }
 
 }

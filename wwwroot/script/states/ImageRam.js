@@ -19,7 +19,12 @@ ENGINE.ImageRam = {
         //E.imagetoRam(this.app.images.spritefont, E.page1);
         //console.log(E.ram[E.page1 + 10])
     },
-    
+
+    resize: function() {
+      E.canvas.width = window.innerWidth;
+      E.canvas.height = window.innerHeight;
+    },
+
     enter: function() {
         E.imagetoRam(this.app.images.spritefont, E.page1);
         //console.log(E.ram[E.page1 + 10])
@@ -66,7 +71,7 @@ ENGINE.ImageRam = {
 
 
         this.makeColorBar();
-        
+
         E.gfx.spr(0,0,5,7,64,64);
 
         E.render();
