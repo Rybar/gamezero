@@ -5,7 +5,8 @@ uses [playground.js](http://playgroundjs.com) for input and state management
 resolution: 256x256
 
 
-{% include iframe.html url="http://rybar.github.com/gamezero/wwwroot/"%}
+{% include iframe.html url="https://rybar.github.com/gamezero/wwwroot/"%}
+
 hit 's' to rotate thru demos.
 
-[gamezero](http://rybar.github.io/gamezero/wwwroot/)
+[gamezero](https://rybar.github.io/gamezero/wwwroot/)
