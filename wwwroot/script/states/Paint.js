@@ -12,7 +12,7 @@ ENGINE.Paint = {
             x: 0,
             y: 0,
             ox: -1,
-            oy: -1
+            oy: -1,
         };
 
 
@@ -97,10 +97,10 @@ ENGINE.Paint = {
 
 
 
-        var i = 0x10000;
+        var i = E.page1;
         while(i--){
-            if(E.ram[0x30000 - i] > 0){
-                E.ram[0x10000 - i] = E.ram[0x30000 - i]
+            if(E.ram[E.page3 - i] > 0){
+                E.ram[E.page1 - i] = E.ram[E.page3 - i]
             }
         }
 

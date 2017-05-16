@@ -1,16 +1,6 @@
 ENGINE = {
     E: this,
 
-    extend: function(obj) {
-    each(slice.call(arguments, 1), function(source) {
-        if (source) {
-            for (var prop in source) {
-                obj[prop] = source[prop];
-            }
-        }
-    });
-    return obj;
-    },
 
     /*
      screen memory
@@ -35,9 +25,11 @@ ENGINE = {
         0xffff9b63, 0xffe4cd5f, 0xfffcdbcb, 0xffffffff, 0xffb7ad9b, 0xff877e84, 0xff6a6a69, 0xff525659, 0xff8a4276,
         0xff3232ac, 0xff6357d9, 0xffba7bd7, 0xff4a978f, 0xff306f8a],
 
-    brightness: [0,1,2,14,3,15,13,27,26,25,16,4,12,24.31,28,17,23,11,5,30,29,18,6,10,22,19,7,9,20,8,21],
+    brightness: [0,1,2,14,3,15,13,27,26,25,16,4,12,24,31,28,17,23,11,5,30,29,18,6,10,22,19,7,9,20,8,21],
 
+    palDefault: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
 
+    pal: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
 
     renderTarget: 0x00000,
 
@@ -177,20 +169,11 @@ ENGINE = {
             var x = -r, y = 0, err = 2 - 2 * r;
             /* II. Quadrant */
             do {
-
                 this.line(xm-x, ym-y, xm+x, ym-y, color);
                 this.line(xm-x, ym+y, xm+x, ym+y, color);
-                //var x1 = (xm-x), x2 = (xm + x), y1 = (ym-y), y2 = (ym+y);
-
-
-                //console.log(y1 * ENGINE.canvasWidth + x1, ENGINE.canvasWidth + x2)
-                //ENGINE.screen.fill(color, (ym - y) * 256 + (xm + x), ((ym - y) * 256 + (xm - x));
-                //ENGINE.screen.fill(color, (ym + y) * 256 + (xm + x), (ym + y) * 256 + (xm - x));
                 r = err;
                 if (r <= y) err += ++y * 2 + 1;
-                /* e_xy+e_y < 0 */
                 if (r > x || err > y) err += ++x * 2 + 1;
-                /* e_xy+e_x > 0 or no 2nd y-step */
             } while (x < 0);
         },
 
@@ -298,8 +281,28 @@ ENGINE = {
             }
 
 
-        }
+        },
 
+        checker: function(nRow, nCol, color) {
+          var w = 256;
+          var h = 256;
+          var x = 0;
+          var y = 0;
+
+          nRow = nRow || 8;    // default number of rows
+          nCol = nCol || 8;    // default number of columns
+
+          w /= nCol;            // width of a block
+          h /= nRow;            // height of a block
+
+          for (var i = 0; i < nRow; ++i) {
+              for (var j = 0, col = nCol / 2; j < col; ++j) {
+                x = 2 * j * w + (i % 2 ? 0 : w);
+                y = i * h;
+                  E.gfx.fillRect(x, y, x+w, y+h, color);
+              }
+          }
+        }
     },
 
     UIObject: {
