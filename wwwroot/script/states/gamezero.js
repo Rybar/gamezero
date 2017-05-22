@@ -9,14 +9,17 @@ ENGINE.gamezero = {
     create: function() {
 
       E.triangles = [];
-      for(var i = 0; i < 100; i++){
+      for(var i = 0; i < 300; i++){
+        let ox = (Math.random() * 255)|0;
+        let oy = (Math.random() * 255)|0;
+        let rad = 25;
         E.triangles.push({
-          x1: (Math.random() * 255)|0,
-          y1: (Math.random() * 255)|0,
-          x2: (Math.random() * 255)|0,
-          y2: (Math.random() * 255)|0,
-          x3: (Math.random() * 255)|0,
-          y3: (Math.random() * 255)|0,
+          x1: ox + (Math.random() * rad * 2) - rad,
+          y1: oy + (Math.random() * rad * 2) - rad,
+          x2: ox + (Math.random() * rad * 2) - rad,
+          y2: oy + (Math.random() * rad * 2) - rad,
+          x3: ox + (Math.random() * rad * 2) - rad,
+          y3: oy + (Math.random() * rad * 2) - rad,
           color: (Math.random() * 31)|0,
         })
       }
