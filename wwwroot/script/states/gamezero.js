@@ -8,17 +8,38 @@ ENGINE.gamezero = {
 
     create: function() {
 
+      E.triangles = [];
+      for(var i = 0; i < 100; i++){
+        E.triangles.push({
+          x1: (Math.random() * 255)|0,
+          y1: (Math.random() * 255)|0,
+          x2: (Math.random() * 255)|0,
+          y2: (Math.random() * 255)|0,
+          x3: (Math.random() * 255)|0,
+          y3: (Math.random() * 255)|0,
+          color: (Math.random() * 31)|0,
+        })
+      }
+
+      E.twoColorPalette = [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1];
+      E.inversePalette = E.palDefault.slice().reverse();
+      E.warmPalette = [14,0,14,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7];
+
+
         E.bgColor = 0;
         E.fgColor = 21;
         E.t = 0;
+        E.moveX = 0;
 
         E.renderTarget = E.page2;
         E.gfx.fillRect(0,0,256,256,2);
         E.gfx.checker(16,16,1);
+        //E.gfx.fillCircle(64,64,17,21);
 
-        E.renderTarget = E.page3;
-        E.gfx.fillRect(64,0,90,256,5);
-        E.gfx.fillRect(66,0,88,256,3);
+
+        // E.renderTarget = E.page3;
+        // E.gfx.fillRect(64,0,90,256,5);
+        // E.gfx.fillRect(66,0,88,256,3);
 
 
         //E.gfx.fillRect(0,0,256,256,2);
@@ -48,6 +69,29 @@ ENGINE.gamezero = {
 
     step: function(dt) {
         E.t += dt;
+
+        E.cos = Math.cos(dt);
+        E.sin = Math.sin(dt);
+
+        for(var i = 0; i < E.triangles.length; i++){
+
+            var tri = E.triangles[i],
+
+            dx1 = tri.x1 + -128,
+            dx2 = tri.x2 + -128,
+            dx3 = tri.x3 + -128,
+            dy1 = tri.y1 + -128,
+            dy2 = tri.y2 + -128,
+            dy3 = tri.y3 + -128;
+
+            E.triangles[i].x1 = E.cos * dx1 - E.sin * dy1 + 128;
+            E.triangles[i].y1 = E.sin * dx1 + E.cos * dy1 + 128;
+            E.triangles[i].x2 = E.cos * dx2 - E.sin * dy2 + 128;
+            E.triangles[i].y2 = E.sin * dx2 + E.cos * dy2 + 128;
+            E.triangles[i].x3 = E.cos * dx3 - E.sin * dy3 + 128;
+            E.triangles[i].y3 = E.sin * dx3 + E.cos * dy3 + 128;
+        };
+
         E.player.x += dt * E.player.xvel;
         E.player.y += dt * E.player.yvel;
         E.player.xvel *= E.drag;
@@ -101,6 +145,18 @@ ENGINE.gamezero = {
     render: function(dt) {
 
         E.renderTarget = E.page1;
+        for(var i = 0; i < E.triangles.length; i++){
+          E.gfx.fillTriangle(
+            E.triangles[i].x1,
+            E.triangles[i].y1,
+            E.triangles[i].x2,
+            E.triangles[i].y2,
+            E.triangles[i].x3,
+            E.triangles[i].y3,
+            E.triangles[i].color
+          )
+        }
+        //E.pal = [0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0]
 
         E.gfx.circle(E.player.x, E.player.y, E.player.radius, 21);
 
@@ -116,7 +172,7 @@ ENGINE.gamezero = {
         //our background was drawn to page2 in create()
         E.renderSource = E.page2;
         //reset the render target to screen
-        E.renderTarget = E.screen;
+        E.renderTarget = E.page4;
         //draw it!
         E.gfx.spr(0,0,256,256,0,0);
 
@@ -124,9 +180,22 @@ ENGINE.gamezero = {
         E.renderSource = E.page1;
         E.gfx.spr(0,0,256,256,0,0);
 
-        //our foreground stuff is on page3
-        E.renderSource = E.page3;
-        E.gfx.spr(0,0,256,256,0,0);
+        E.renderSource = E.page4;
+        E.renderTarget = E.screen;
+        E.gfx.spr(0,0,256,256);
+
+
+        // E.pal = E.warmPalette;
+        // E.moveX = (Math.sin(E.t)*64)|0;
+        // E.gfx.spr(64,64, 128,128, 64,64);
+
+        // E.pal = E.twoColorPalette;
+        // E.gfx.spr(0,0,64,64);
+        // E.gfx.spr(0,64*3, 64, 256, 0, 64*3);
+        // E.gfx.spr(64*3, 64*3, 256, 256, 64*3, 64*3);
+        // E.gfx.spr(127+64,0, 256,64, 127+64,0)
+
+        E.pal = E.palDefault;
 
         E.render();
 

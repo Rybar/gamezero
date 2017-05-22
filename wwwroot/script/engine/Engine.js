@@ -81,7 +81,7 @@ ENGINE = {
 
         pset: function (x, y, color) { //from colors array, 0-31
             x = x|0; y = y|0;
-            color = Math.max(0, Math.min(color, 31))|0;
+            //color = Math.max(0, Math.min(color, 31))|0;
 
             if (x > -1 && x < 256 && y > -1 && y < 256) {
                 E.ram[E.renderTarget + (y * 256 + x)] = color;
@@ -209,6 +209,99 @@ ENGINE = {
             E.gfx.line(x1,y2, x2, y2, color);
         },
 
+        fillTriangle: function( x1, y1, x2, y2, x3, y3, color ) {
+
+          var canvasWidth = 256;
+          // http://devmaster.net/forums/topic/1145-advanced-rasterization/
+          // 28.4 fixed-point coordinates
+          var x1 = Math.round( 16 * x1 );
+          var x2 = Math.round( 16 * x2 );
+          var x3 = Math.round( 16 * x3 );
+          var y1 = Math.round( 16 * y1 );
+          var y2 = Math.round( 16 * y2 );
+          var y3 = Math.round( 16 * y3 );
+          // Deltas
+          var dx12 = x1 - x2, dy12 = y2 - y1;
+          var dx23 = x2 - x3, dy23 = y3 - y2;
+          var dx31 = x3 - x1, dy31 = y1 - y3;
+          // Bounding rectangle
+          var minx = Math.max( ( Math.min( x1, x2, x3 ) + 0xf ) >> 4, 0 );
+          var maxx = Math.min( ( Math.max( x1, x2, x3 ) + 0xf ) >> 4, 256 );
+          var miny = Math.max( ( Math.min( y1, y2, y3 ) + 0xf ) >> 4, 0 );
+          var maxy = Math.min( ( Math.max( y1, y2, y3 ) + 0xf ) >> 4, 256 );
+          // Block size, standard 8x8 (must be power of two)
+          var q = 8;
+          // Start in corner of 8x8 block
+          minx &= ~(q - 1);
+          miny &= ~(q - 1);
+          // Constant part of half-edge functions
+          var c1 = -dy12 * x1 - dx12 * y1;
+          var c2 = -dy23 * x2 - dx23 * y2;
+          var c3 = -dy31 * x3 - dx31 * y3;
+          // Correct for fill convention
+          if ( dy12 > 0 || ( dy12 == 0 && dx12 > 0 ) ) c1 ++;
+          if ( dy23 > 0 || ( dy23 == 0 && dx23 > 0 ) ) c2 ++;
+          if ( dy31 > 0 || ( dy31 == 0 && dx31 > 0 ) ) c3 ++;
+          // Note this doesn't kill subpixel precision, but only because we test for >=0 (not >0).
+          // It's a bit subtle. :)
+          c1 = (c1 - 1) >> 4;
+          c2 = (c2 - 1) >> 4;
+          c3 = (c3 - 1) >> 4;
+          // Set up min/max corners
+          var qm1 = q - 1; // for convenience
+          var nmin1 = 0, nmax1 = 0;
+          var nmin2 = 0, nmax2 = 0;
+          var nmin3 = 0, nmax3 = 0;
+          if (dx12 >= 0) nmax1 -= qm1*dx12; else nmin1 -= qm1*dx12;
+          if (dy12 >= 0) nmax1 -= qm1*dy12; else nmin1 -= qm1*dy12;
+          if (dx23 >= 0) nmax2 -= qm1*dx23; else nmin2 -= qm1*dx23;
+          if (dy23 >= 0) nmax2 -= qm1*dy23; else nmin2 -= qm1*dy23;
+          if (dx31 >= 0) nmax3 -= qm1*dx31; else nmin3 -= qm1*dx31;
+          if (dy31 >= 0) nmax3 -= qm1*dy31; else nmin3 -= qm1*dy31;
+          // Loop through blocks
+          var linestep = (canvasWidth-q);
+          for ( var y0 = miny; y0 < maxy; y0 += q ) {
+            for ( var x0 = minx; x0 < maxx; x0 += q ) {
+              // Edge functions at top-left corner
+              var cy1 = c1 + dx12 * y0 + dy12 * x0;
+              var cy2 = c2 + dx23 * y0 + dy23 * x0;
+              var cy3 = c3 + dx31 * y0 + dy31 * x0;
+              // Skip block when at least one edge completely out
+              if (cy1 < nmax1 || cy2 < nmax2 || cy3 < nmax3) continue;
+              // Offset at top-left corner
+              var offset = (x0 + y0 * canvasWidth);
+              // Accept whole block when fully covered
+              if (cy1 >= nmin1 && cy2 >= nmin2 && cy3 >= nmin3) {
+                for ( var iy = 0; iy < q; iy ++ ) {
+                  for ( var ix = 0; ix < q; ix ++, offset ++ ) {
+                    E.ram[E.renderTarget + offset] = color;
+                  }
+                  offset += linestep;
+                }
+              } else { // Partially covered block
+                for ( var iy = 0; iy < q; iy ++ ) {
+                  var cx1 = cy1;
+                  var cx2 = cy2;
+                  var cx3 = cy3;
+                  for ( var ix = 0; ix < q; ix ++ ) {
+                    if ( (cx1 | cx2 | cx3) >= 0 ) {
+                      E.ram[E.renderTarget + offset] = color;
+                    }
+                    cx1 += dy12;
+                    cx2 += dy23;
+                    cx3 += dy31;
+                    offset ++;
+                  }
+                  cy1 += dx12;
+                  cy2 += dx23;
+                  cy3 += dx31;
+                  offset += linestep;
+                }
+              }
+            }
+          }
+        },
+
         spr: function(sx = 0, sy = 0, sw = 16, sh = 16, x=0, y=0, flipx = false, flipy = false){
 
 
@@ -223,7 +316,7 @@ ENGINE = {
 
                                 //E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = 21;
 
-                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+(sh-i))*256+sx+(sw-j)))];
+                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.pal[ E.ram[(E.renderSource + ((sy+(sh-i))*256+sx+(sw-j)))] ];
 
                                 }
 
@@ -250,7 +343,7 @@ ENGINE = {
 
                                 if(E.ram[(E.renderSource + ((sy+i)*256+sx+j))] > 0) {
 
-                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.ram[(E.renderSource + ((sy+i)*256+sx+j))];
+                                E.ram[ (E.renderTarget + ((y+i)*256+x+j)) ] = E.pal[ E.ram[(E.renderSource + ((sy+i)*256+sx+j))] ];
 
                                 }
 
@@ -419,7 +512,7 @@ ENGINE = {
         var i = 0x10000;  // display is first 0x10000 bytes of ram
 
         while (i--) {
-            E.data[i] = E.colors[E.ram[i]]; //data is 32bit view of final screen buffer
+            E.data[i] = E.colors[E.pal[E.ram[i]]]; //data is 32bit view of final screen buffer
 
         }
 
