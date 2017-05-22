@@ -9,10 +9,10 @@ ENGINE.gamezero = {
     create: function() {
 
       E.triangles = [];
-      for(var i = 0; i < 300; i++){
+      for(var i = 0; i < 2000; i++){
         let ox = (Math.random() * 255)|0;
         let oy = (Math.random() * 255)|0;
-        let rad = 25;
+        let rad = 15;
         E.triangles.push({
           x1: ox + (Math.random() * rad * 2) - rad,
           y1: oy + (Math.random() * rad * 2) - rad,
@@ -23,6 +23,7 @@ ENGINE.gamezero = {
           color: (Math.random() * 31)|0,
         })
       }
+      console.log(E.triangles.length);
 
       E.twoColorPalette = [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1];
       E.inversePalette = E.palDefault.slice().reverse();
@@ -148,28 +149,30 @@ ENGINE.gamezero = {
     render: function(dt) {
 
         E.renderTarget = E.page1;
+        E.gfx.fillRect(0,0,256,256,0);
         for(var i = 0; i < E.triangles.length; i++){
-          E.gfx.fillTriangle(
-            E.triangles[i].x1,
-            E.triangles[i].y1,
-            E.triangles[i].x2,
-            E.triangles[i].y2,
-            E.triangles[i].x3,
-            E.triangles[i].y3,
-            E.triangles[i].color
-          )
-        }
+
+            E.gfx.fillTriangle(
+              E.triangles[i].x1,
+              E.triangles[i].y1,
+              E.triangles[i].x2,
+              E.triangles[i].y2,
+              E.triangles[i].x3,
+              E.triangles[i].y3,
+              E.triangles[i].color
+            )
+          }
         //E.pal = [0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0]
 
         E.gfx.circle(E.player.x, E.player.y, E.player.radius, 21);
 
-        var i = 2000;
-        while(i--){
-            var x = (Math.random()*256)|0;
-            var y = (Math.random()*256)|0;
-            var color = E.ram[E.page1 + (y*256+x)];
-            E.gfx.circle(x, y, 1, color-1);
-        }
+        // var i = 5000;
+        // while(i--){
+        //     var x = (Math.random()*256)|0;
+        //     var y = (Math.random()*256)|0;
+        //     var color = E.ram[E.page1 + (y*256+x)];
+        //     E.gfx.circle(x, y, 1, color-1);
+        // }
         //composite
 
         //our background was drawn to page2 in create()
@@ -188,15 +191,15 @@ ENGINE.gamezero = {
         E.gfx.spr(0,0,256,256);
 
 
-        // E.pal = E.warmPalette;
-        // E.moveX = (Math.sin(E.t)*64)|0;
-        // E.gfx.spr(64,64, 128,128, 64,64);
+        E.pal = E.warmPalette;
+        E.moveX = (Math.sin(E.t)*64)|0;
+        E.gfx.spr(64,64, 128,128, 64,64);
 
-        // E.pal = E.twoColorPalette;
-        // E.gfx.spr(0,0,64,64);
-        // E.gfx.spr(0,64*3, 64, 256, 0, 64*3);
-        // E.gfx.spr(64*3, 64*3, 256, 256, 64*3, 64*3);
-        // E.gfx.spr(127+64,0, 256,64, 127+64,0)
+        E.pal = E.twoColorPalette;
+        E.gfx.spr(0,0,64,64);
+        E.gfx.spr(0,64*3, 64, 256, 0, 64*3);
+        E.gfx.spr(64*3, 64*3, 256, 256, 64*3, 64*3);
+        E.gfx.spr(127+64,0, 256,64, 127+64,0)
 
         E.pal = E.palDefault;
 

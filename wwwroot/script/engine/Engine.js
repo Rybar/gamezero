@@ -209,6 +209,12 @@ ENGINE = {
             E.gfx.line(x1,y2, x2, y2, color);
         },
 
+        triangle: function (x1, y1, x2, y2, x3, y3, color) {
+          E.gfx.line(x1,y1, x2,y2, color);
+          E.gfx.line(x2,y2, x3,y3, color);
+          E.gfx.line(x3,y3, x1,y1, color);
+        },
+
         fillTriangle: function( x1, y1, x2, y2, x3, y3, color ) {
 
           var canvasWidth = 256;
